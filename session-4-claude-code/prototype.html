@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rendezvous — AI Wedding Concierge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,200;0,9..144,300;0,9..144,400;1,9..144,200;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --bg: #FAF8F5;
+      --surface: #F5EFE6;
+      --surface-2: #EDE5D8;
+      --rose: #C9A49A;
+      --sage: #8A9E8C;
+      --text: #2C2420;
+      --text-2: #7A6E68;
+      --muted: #B0A89F;
+      --border: #E8DDD4;
+      --shadow: 0 2px 20px rgba(44,36,32,0.06);
+      --ease: cubic-bezier(0.25,0.46,0.45,0.94);
+      --serif: 'Fraunces', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--sans); background: var(--bg); color: var(--text); line-height: 1.65; overflow-x: hidden; }
+    button { cursor: pointer; font-family: var(--sans); }
+    input, select, textarea { font-family: var(--sans); }
+
+    /* ── Views ── */
+    .view { display: none; min-height: 100vh; opacity: 0; transition: opacity 0.5s var(--ease); flex-direction: column; }
+    .view.active { display: flex; }
+    .view.visible { opacity: 1; }
+    #view-dashboard.active { flex-direction: row; align-items: flex-start; }
+    #view-generating.active { align-items: center; justify-content: center; }
+
+    /* ── Animations ── */
+    @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes spin   { to { transform: rotate(360deg); } }
+    @keyframes pulse  { 0%,100% { opacity:.4; transform:scale(1); } 50% { opacity:1; transform:scale(1.1); } }
+
+    .r  { opacity:0; animation: fadeUp 0.8s var(--ease) forwards; }
+    .r1 { animation-delay: 0.1s; }
+    .r2 { animation-delay: 0.25s; }
+    .r3 { animation-delay: 0.4s; }
+    .r4 { animation-delay: 0.55s; }
+    .r5 { animation-delay: 0.7s; }
+
+    /* ── Type ── */
+    .display { font-family: var(--serif); font-size: clamp(52px,7vw,88px); font-weight: 300; line-height: 1.08; letter-spacing: 0.02em; }
+    .display em { font-style: italic; font-weight: 200; }
+    .h1 { font-family: var(--serif); font-size: clamp(34px,4vw,52px); font-weight: 400; line-height: 1.15; letter-spacing: 0.01em; }
+    .h2 { font-family: var(--serif); font-size: clamp(22px,2.5vw,34px); font-weight: 400; line-height: 1.2; }
+    .h3 { font-family: var(--serif); font-size: 20px; font-weight: 500; }
+    .label { font-size: 12px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-2); }
+
+    /* ── Buttons ── */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 28px; border-radius: 4px; font-size: 14px; font-weight: 500; border: none; transition: all 0.3s ease-out; text-decoration: none; }
+    .btn-primary { background: var(--rose); color: var(--text); }
+    .btn-primary:hover { background: #BC9590; transform: translateY(-1px); }
+    .btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text-2); }
+    .btn-secondary:hover { border-color: var(--rose); color: var(--rose); }
+    .btn-ghost { background: transparent; color: var(--rose); padding: 13px 0; }
+    .btn-ghost:hover { text-decoration: underline; }
+    .btn:active { transform: scale(0.98) !important; transition-duration: 0.1s; }
+
+    /* ── Form ── */
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label { font-size: 12px; font-weight: 500; color: var(--text-2); letter-spacing: 0.04em; }
+    .form-input { padding: 12px 15px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 15px; color: var(--text); outline: none; transition: border-color 0.25s; width: 100%; appearance: none; }
+    .form-input::placeholder { color: var(--muted); }
+    .form-input:focus { border-color: var(--rose); }
+
+    /* ── Tags ── */
+    .tag { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+    .tag-sage { background: rgba(138,158,140,0.15); color: var(--sage); }
+    .tag-rose { background: rgba(201,164,154,0.15); color: var(--rose); }
+
+    /* ═══════════════════════════════════════════════ */
+    /* LANDING                                         */
+    /* ═══════════════════════════════════════════════ */
+    #view-landing {
+      background:
+        radial-gradient(ellipse at 72% 22%, rgba(201,164,154,0.16) 0%, transparent 55%),
+        radial-gradient(ellipse at 15% 80%, rgba(138,158,140,0.1) 0%, transparent 50%),
+        linear-gradient(160deg, #FAF8F5 0%, #F0E8DC 100%);
+    }
+
+    .land-nav { display: flex; align-items: center; justify-content: space-between; padding: 32px 64px; }
+    .logo { font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: 0.04em; color: var(--text); }
+    .logo span { color: var(--rose); }
+
+    .land-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 48px 64px 64px; max-width: 880px; }
+    .land-eyebrow { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+    .eyebrow-line { width: 36px; height: 1px; background: var(--rose); }
+    .land-headline { margin-bottom: 28px; }
+    .land-sub { max-width: 500px; font-size: 17px; color: var(--text-2); line-height: 1.65; margin-bottom: 48px; }
+    .land-cta { display: flex; align-items: center; gap: 28px; }
+
+    .land-watermark {
+      position: fixed; right: -60px; top: 50%; transform: translateY(-50%);
+      font-family: var(--serif); font-size: 340px; font-weight: 200; font-style: italic;
+      color: transparent; -webkit-text-stroke: 1px rgba(201,164,154,0.1);
+      line-height: 1; pointer-events: none; user-select: none;
+    }
+
+    .land-stats { display: flex; gap: 52px; padding: 36px 64px; border-top: 1px solid var(--border); }
+    .stat-num { font-family: var(--serif); font-size: 30px; font-weight: 300; }
+    .stat-lbl { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ═══════════════════════════════════════════════ */
+    /* INTAKE                                          */
+    /* ═══════════════════════════════════════════════ */
+    #view-intake { background: var(--bg); }
+
+    .intake-nav { display: flex; align-items: center; justify-content: space-between; padding: 26px 64px; border-bottom: 1px solid var(--border); }
+
+    .intake-body { display: grid; grid-template-columns: 1fr 1fr; flex: 1; }
+
+    .intake-left {
+      background:
+        radial-gradient(ellipse at 30% 70%, rgba(201,164,154,0.12) 0%, transparent 60%),
+        linear-gradient(160deg, #FAF8F5 0%, #EDE5D8 100%);
+      padding: 72px 56px; display: flex; flex-direction: column; justify-content: center;
+    }
+
+    .step-dots { display: flex; align-items: center; gap: 8px; margin-bottom: 48px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.35s var(--ease); }
+    .dot.active { width: 28px; border-radius: 4px; background: var(--rose); }
+    .dot.done { background: var(--sage); }
+
+    .intake-copy { display: none; }
+    .intake-copy.show { display: block; animation: fadeIn 0.4s ease-out; }
+    .intake-eyebrow { color: var(--rose); margin-bottom: 16px; }
+
+    .intake-right { padding: 72px 56px; display: flex; flex-direction: column; justify-content: center; }
+
+    .form-step { display: none; flex-direction: column; gap: 24px; }
+    .form-step.show { display: flex; animation: fadeUp 0.45s var(--ease) forwards; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-actions { display: flex; align-items: center; justify-content: space-between; padding-top: 4px; }
+
+    .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .style-opt { padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; text-align: left; transition: all 0.25s ease-out; }
+    .style-opt:hover { border-color: var(--rose); transform: translateY(-1px); }
+    .style-opt.on { border-color: var(--rose); background: rgba(201,164,154,0.07); }
+    .style-opt-name { font-family: var(--serif); font-size: 15px; font-weight: 400; color: var(--text); }
+    .style-opt-desc { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+    /* ═══════════════════════════════════════════════ */
+    /* GENERATING                                      */
+    /* ═══════════════════════════════════════════════ */
+    #view-generating {
+      background:
+        radial-gradient(ellipse at 50% 50%, rgba(201,164,154,0.1) 0%, transparent 65%),
+        linear-gradient(160deg, #FAF8F5 0%, #EDE5D8 100%);
+      text-align: center;
+    }
+
+    .gen-wrap { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+    .gen-title { font-family: var(--serif); font-size: 28px; font-weight: 300; margin-bottom: 4px; }
+    .gen-sub { font-size: 14px; color: var(--muted); }
+    .gen-spinner { width: 46px; height: 46px; border: 2px solid var(--border); border-top-color: var(--rose); border-radius: 50%; animation: spin 1.2s linear infinite; margin: 24px 0 8px; }
+
+    .gen-steps { display: flex; flex-direction: column; gap: 14px; text-align: left; min-width: 290px; }
+    .gen-step { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--muted); opacity: 0; }
+    .gen-step.done { color: var(--text-2); animation: fadeIn 0.35s ease-out forwards; }
+    .gen-icon { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; transition: all 0.3s; }
+    .gen-step.done .gen-icon { background: var(--sage); border-color: var(--sage); color: white; }
+
+    /* ═══════════════════════════════════════════════ */
+    /* DASHBOARD                                       */
+    /* ═══════════════════════════════════════════════ */
+    .sidebar {
+      width: 272px; flex-shrink: 0; background: var(--surface);
+      border-right: 1px solid var(--border); display: flex; flex-direction: column;
+      height: 100vh; position: sticky; top: 0; overflow-y: auto;
+    }
+
+    .sidebar-logo { padding: 24px 24px 18px; border-bottom: 1px solid var(--border); }
+
+    .wedding-profile { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+    .profile-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; font-size: 13px; color: var(--text-2); }
+    .profile-icon { color: var(--rose); font-size: 14px; width: 18px; text-align: center; }
+
+    .shortlist-wrap { padding: 18px 24px; flex: 1; }
+    .shortlist-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .shortlist-empty { font-size: 13px; color: var(--muted); font-style: italic; padding: 12px 0; }
+    .sl-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 11px; background: var(--bg); border-radius: 8px; margin-bottom: 7px; animation: fadeIn 0.3s ease-out; }
+    .sl-name { font-size: 13px; font-weight: 500; }
+    .sl-cat { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .sl-remove { background: none; border: none; color: var(--muted); font-size: 16px; padding: 2px 4px; line-height: 1; transition: color 0.2s; }
+    .sl-remove:hover { color: var(--rose); }
+
+    /* Dash main */
+    .dash-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .dash-topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 40px; border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 40; }
+    .dash-greeting { font-family: var(--serif); font-size: 20px; font-weight: 400; }
+
+    .cat-nav { display: flex; gap: 2px; padding: 22px 40px 0; }
+    .cat-btn { padding: 8px 18px; border-radius: 4px; font-size: 13px; font-weight: 500; border: 1px solid transparent; background: transparent; color: var(--muted); transition: all 0.25s ease-out; }
+    .cat-btn:hover { color: var(--text-2); background: var(--surface); }
+    .cat-btn.active { background: var(--surface); border-color: var(--border); color: var(--text); }
+
+    .vendor-section { padding: 28px 40px 60px; }
+    .vendor-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
+    .vendor-count { font-size: 13px; color: var(--muted); }
+
+    .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
+
+    .vcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; animation: fadeUp 0.6s var(--ease) backwards; }
+    .vcard:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(44,36,32,0.09); }
+
+    .vcard-img { height: 150px; background: var(--surface-2); position: relative; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: .5; }
+    .vcard-badge { position: absolute; top: 11px; left: 11px; }
+    .vcard-save {
+      position: absolute; top: 11px; right: 11px;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(250,248,245,0.88); backdrop-filter: blur(8px);
+      border: 1px solid var(--border); display: flex; align-items: center;
+      justify-content: center; font-size: 14px; color: var(--muted);
+      transition: all 0.25s ease-out;
+    }
+    .vcard-save:hover { color: var(--rose); transform: scale(1.1); }
+    .vcard-save.saved { color: var(--rose); background: rgba(201,164,154,0.15); }
+
+    .vcard-body { padding: 18px 22px; }
+    .vcard-cat { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+    .vcard-name { font-family: var(--serif); font-size: 19px; font-weight: 400; line-height: 1.2; margin-bottom: 6px; }
+    .vcard-loc { font-size: 12px; color: var(--muted); margin-bottom: 11px; }
+    .vcard-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+    .vcard-foot { display: flex; align-items: flex-end; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
+    .vcard-price { font-family: var(--serif); font-size: 16px; font-weight: 400; }
+    .vcard-price-lbl { font-size: 10px; color: var(--muted); margin-top: 1px; }
+    .vcard-cap { font-size: 11px; color: var(--muted); }
+
+    /* Chat */
+    .chat-panel {
+      width: 370px; flex-shrink: 0; background: var(--surface);
+      border-left: 1px solid var(--border); display: flex; flex-direction: column;
+      height: 100vh; position: fixed; right: 0; top: 0; bottom: 0; z-index: 100;
+      transform: translateX(100%); transition: transform 0.45s var(--ease);
+    }
+    .chat-panel.open { transform: translateX(0); }
+
+    .chat-head { padding: 22px 22px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .chat-title { font-family: var(--serif); font-size: 20px; font-weight: 400; }
+    .chat-x { background: none; border: none; font-size: 22px; color: var(--muted); line-height: 1; transition: color 0.2s; }
+    .chat-x:hover { color: var(--text); }
+
+    .chat-msgs { flex: 1; overflow-y: auto; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+
+    .msg { display: flex; gap: 9px; animation: fadeUp 0.3s ease-out; }
+    .msg.user { flex-direction: row-reverse; }
+    .msg-avatar { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .msg.ai   .msg-avatar { background: rgba(201,164,154,0.15); color: var(--rose); }
+    .msg.user .msg-avatar { background: rgba(138,158,140,0.15); color: var(--sage); }
+
+    .bubble { max-width: 252px; padding: 11px 14px; font-size: 13px; line-height: 1.55; }
+    .msg.ai   .bubble { background: var(--bg); border: 1px solid var(--border); color: var(--text-2); border-radius: 4px 10px 10px 10px; }
+    .msg.user .bubble { background: var(--rose); color: white; border-radius: 10px 4px 10px 10px; }
+
+    .typing-dots { display: flex; gap: 4px; align-items: center; padding: 3px 0; }
+    .tdot { width: 5px; height: 5px; border-radius: 50%; background: var(--muted); animation: pulse 1.4s ease-in-out infinite; }
+    .tdot:nth-child(2) { animation-delay: 0.2s; }
+    .tdot:nth-child(3) { animation-delay: 0.4s; }
+
+    .chat-input-wrap { padding: 14px 20px 22px; border-top: 1px solid var(--border); }
+    .suggestions { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+    .sug { padding: 5px 11px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg); font-size: 11px; color: var(--text-2); transition: all 0.2s; }
+    .sug:hover { border-color: var(--rose); color: var(--rose); }
+
+    .chat-row { display: flex; gap: 7px; }
+    .chat-input { flex: 1; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--text); outline: none; transition: border-color 0.25s; }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-input:focus { border-color: var(--rose); }
+    .chat-send { width: 38px; height: 38px; border-radius: 6px; background: var(--rose); border: none; color: white; font-size: 15px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .chat-send:hover { background: #BC9590; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- LANDING                                            -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="view-landing" class="view active">
+  <nav class="land-nav r">
+    <div class="logo">Rendez<span>vous</span></div>
+    <button class="btn btn-secondary" onclick="goIntake()">Sign in</button>
+  </nav>
+
+  <div class="land-watermark" aria-hidden="true">R</div>
+
+  <main class="land-hero">
+    <div class="land-eyebrow r r1">
+      <div class="eyebrow-line"></div>
+      <span class="label">AI Wedding Concierge</span>
+    </div>
+
+    <h1 class="display land-headline r r2">
+      Plan the day<br><em>you've imagined.</em>
+    </h1>
+
+    <p class="land-sub r r3">
+      Tell us about your wedding. We find the right vendors, at the right price — without the hours of research.
+    </p>
+
+    <div class="land-cta r r4">
+      <button class="btn btn-primary" onclick="goIntake()">Start planning</button>
+      <button class="btn btn-ghost">See how it works →</button>
+    </div>
+  </main>
+
+  <div class="land-stats r r5">
+    <div>
+      <div class="stat-num">2,400+</div>
+      <div class="stat-lbl">Vendors across Canada</div>
+    </div>
+    <div>
+      <div class="stat-num">94%</div>
+      <div class="stat-lbl">Find a venue within one week</div>
+    </div>
+    <div>
+      <div class="stat-num">8 hrs</div>
+      <div class="stat-lbl">Average research time saved</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- INTAKE                                             -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="view-intake" class="view">
+  <nav class="intake-nav">
+    <div class="logo">Rendez<span>vous</span></div>
+    <span class="label">Step <span id="step-num">1</span> of 3</span>
+  </nav>
+
+  <div class="intake-body" style="flex:1;">
+    <!-- Left panel -->
+    <div class="intake-left">
+      <div class="step-dots">
+        <div class="dot active" id="d1"></div>
+        <div class="dot" id="d2"></div>
+        <div class="dot" id="d3"></div>
+      </div>
+
+      <div id="lc1" class="intake-copy show">
+        <p class="label intake-eyebrow">Where &amp; when</p>
+        <h2 class="h1" style="margin-bottom:18px;">Tell us about<br>your day.</h2>
+        <p style="color:var(--text-2);max-width:340px;">Every wedding begins with a place and a date. Share the basics and we'll start building your profile.</p>
+      </div>
+      <div id="lc2" class="intake-copy">
+        <p class="label intake-eyebrow">Size &amp; budget</p>
+        <h2 class="h1" style="margin-bottom:18px;">Let's talk<br>numbers.</h2>
+        <p style="color:var(--text-2);max-width:340px;">Budget and guest count help us filter vendors to what's actually realistic — no surprises.</p>
+      </div>
+      <div id="lc3" class="intake-copy">
+        <p class="label intake-eyebrow">Your vision</p>
+        <h2 class="h1" style="margin-bottom:18px;">What does your<br>wedding feel like?</h2>
+        <p style="color:var(--text-2);max-width:340px;">Style and cultural elements help us match vendors who truly understand what you're creating.</p>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="intake-right">
+
+      <!-- Step 1 -->
+      <div class="form-step show" id="fs1">
+        <div class="form-group">
+          <label class="form-label">Wedding city</label>
+          <input type="text" class="form-input" placeholder="e.g. Vancouver, BC" id="f-city">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Wedding date</label>
+            <input type="date" class="form-input" id="f-date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ceremony type</label>
+            <select class="form-input">
+              <option value="">Select…</option>
+              <option>Indoor</option><option>Outdoor</option>
+              <option>Beach</option><option>Destination</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <div></div>
+          <button class="btn btn-primary" onclick="goStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="form-step" id="fs2">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Guest count</label>
+            <input type="number" class="form-input" placeholder="e.g. 80" id="f-guests" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Budget range</label>
+            <select class="form-input" id="f-budget">
+              <option value="">Select…</option>
+              <option>Under $15,000</option>
+              <option>$15,000 – $30,000</option>
+              <option>$30,000 – $50,000</option>
+              <option>$50,000 – $75,000</option>
+              <option>$75,000+</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">What matters most right now?</label>
+          <select class="form-input">
+            <option value="">Select a priority…</option>
+            <option>Venue — book this first</option>
+            <option>Photographer — non-negotiable</option>
+            <option>Caterer — food is central</option>
+            <option>Everything equally</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary" onclick="goStep(3)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="form-step" id="fs3">
+        <div class="form-group">
+          <label class="form-label">Wedding style</label>
+          <div class="style-grid">
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Classic</div>
+              <div class="style-opt-desc">Timeless, formal, traditional</div>
+            </button>
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Bohemian</div>
+              <div class="style-opt-desc">Relaxed, natural, free-spirited</div>
+            </button>
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Modern</div>
+              <div class="style-opt-desc">Minimalist, editorial, clean</div>
+            </button>
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Intimate</div>
+              <div class="style-opt-desc">Small, personal, meaningful</div>
+            </button>
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Cultural</div>
+              <div class="style-opt-desc">Rooted in tradition &amp; heritage</div>
+            </button>
+            <button class="style-opt" onclick="pickStyle(this)">
+              <div class="style-opt-name">Garden Party</div>
+              <div class="style-opt-desc">Floral, outdoor, romantic</div>
+            </button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cultural or religious requirements <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          <input type="text" class="form-input" placeholder="e.g. Hindu ceremony, Halal catering, Chinese tea ceremony…" id="f-cultural">
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary" onclick="startGen()">Find my vendors</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- GENERATING                                         -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="view-generating" class="view">
+  <div class="gen-wrap">
+    <p class="gen-title">Finding your vendors</p>
+    <p class="gen-sub">This only takes a moment.</p>
+    <div class="gen-spinner"></div>
+    <div class="gen-steps">
+      <div class="gen-step" id="g1"><div class="gen-icon">✓</div><span>Analysing your wedding profile</span></div>
+      <div class="gen-step" id="g2"><div class="gen-icon">✓</div><span>Filtering by location &amp; budget</span></div>
+      <div class="gen-step" id="g3"><div class="gen-icon">✓</div><span>Matching cultural requirements</span></div>
+      <div class="gen-step" id="g4"><div class="gen-icon">✓</div><span>Curating your shortlist</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!-- DASHBOARD                                          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="view-dashboard" class="view">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo">Rendez<span>vous</span></div></div>
+
+    <div class="wedding-profile">
+      <p class="label" style="margin-bottom:10px;">Your wedding</p>
+      <div class="profile-row"><span class="profile-icon">📍</span><span id="p-city">Vancouver, BC</span></div>
+      <div class="profile-row"><span class="profile-icon">📅</span><span id="p-date">August 2026</span></div>
+      <div class="profile-row"><span class="profile-icon">👥</span><span id="p-guests">80 guests</span></div>
+      <div class="profile-row"><span class="profile-icon">💰</span><span id="p-budget">$30,000 – $50,000</span></div>
+    </div>
+
+    <div class="shortlist-wrap">
+      <div class="shortlist-head">
+        <span class="label">Shortlist</span>
+        <span id="sl-count" style="font-size:11px;color:var(--muted);">0 saved</span>
+      </div>
+      <p class="shortlist-empty" id="sl-empty">Your shortlist is waiting.</p>
+      <div id="sl-items"></div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="dash-main">
+    <div class="dash-topbar">
+      <h1 class="dash-greeting">Good afternoon, <em style="font-family:var(--serif);font-style:italic;font-weight:300;">here's your match.</em></h1>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-secondary" onclick="toggleChat()">Ask your concierge ✦</button>
+      </div>
+    </div>
+
+    <div class="cat-nav">
+      <button class="cat-btn active" onclick="filterCat('all',this)">All</button>
+      <button class="cat-btn" onclick="filterCat('venue',this)">Venues</button>
+      <button class="cat-btn" onclick="filterCat('caterer',this)">Caterers</button>
+      <button class="cat-btn" onclick="filterCat('photographer',this)">Photographers</button>
+      <button class="cat-btn" onclick="filterCat('planner',this)">Planners</button>
+    </div>
+
+    <div class="vendor-section">
+      <div class="vendor-head">
+        <h2 class="h2">Recommended for you</h2>
+        <span class="vendor-count" id="v-count"></span>
+      </div>
+      <div class="vendor-grid" id="vendor-grid"></div>
+    </div>
+  </main>
+
+  <!-- Chat -->
+  <div class="chat-panel" id="chat-panel">
+    <div class="chat-head">
+      <span class="chat-title">Your concierge</span>
+      <button class="chat-x" onclick="toggleChat()">×</button>
+    </div>
+
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="msg ai">
+        <div class="msg-avatar">✦</div>
+        <div class="bubble">Hi! I've reviewed your profile. Ready to help you find the perfect vendors — ask me anything.</div>
+      </div>
+    </div>
+
+    <div class="chat-input-wrap">
+      <div class="suggestions">
+        <button class="sug" onclick="useSug(this)">Venue under $10k?</button>
+        <button class="sug" onclick="useSug(this)">Budget breakdown</button>
+        <button class="sug" onclick="useSug(this)">Best photographers</button>
+        <button class="sug" onclick="useSug(this)">When to book?</button>
+      </div>
+      <div class="chat-row">
+        <input class="chat-input" type="text" id="chat-in" placeholder="Ask anything about your wedding…" onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="chat-send" onclick="sendMsg()">→</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── View system ──────────────────────────────────────── */
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active','visible'));
+  const v = document.getElementById('view-' + id);
+  v.classList.add('active');
+  requestAnimationFrame(() => requestAnimationFrame(() => v.classList.add('visible')));
+}
+setTimeout(() => document.getElementById('view-landing').classList.add('visible'), 60);
+
+function goIntake() {
+  show('intake');
+  goStep(1, true);
+}
+
+/* ── Intake steps ─────────────────────────────────────── */
+let step = 1;
+function goStep(n, init) {
+  [1,2,3].forEach(i => {
+    document.getElementById('lc'+i).classList.toggle('show', i===n);
+    document.getElementById('fs'+i).classList.toggle('show', i===n);
+    const d = document.getElementById('d'+i);
+    d.classList.remove('active','done');
+    if(i < n) d.classList.add('done');
+    else if(i === n) d.classList.add('active');
+  });
+  document.getElementById('step-num').textContent = n;
+  step = n;
+}
+
+function pickStyle(el) {
+  document.querySelectorAll('.style-opt').forEach(s => s.classList.remove('on'));
+  el.classList.add('on');
+}
+
+/* ── Generating ───────────────────────────────────────── */
+function startGen() {
+  // Capture intake values for profile display
+  const city = document.getElementById('f-city').value || 'Vancouver, BC';
+  const guests = document.getElementById('f-guests').value;
+  const budget = document.getElementById('f-budget').value;
+
+  show('generating');
+
+  ['g1','g2','g3','g4'].forEach((id, i) => {
+    setTimeout(() => document.getElementById(id).classList.add('done'), 600 + i*700);
+  });
+
+  setTimeout(() => {
+    // Populate profile sidebar
+    document.getElementById('p-city').textContent = city;
+    if(guests) document.getElementById('p-guests').textContent = guests + ' guests';
+    if(budget) document.getElementById('p-budget').textContent = budget;
+
+    show('dashboard');
+    renderVendors('all');
+  }, 3400);
+}
+
+/* ── Vendor data ──────────────────────────────────────── */
+const vendors = [
+  { id:1,  cat:'venue',        name:'The Fairmont Pacific Rim',  loc:'Downtown Vancouver',        price:'$8,000 – $18,000', pLabel:'venue rental',      cap:'Up to 300 guests', tags:['Indoor','Luxury','Full service'],         match:97, emoji:'🏛️' },
+  { id:2,  cat:'venue',        name:'Brix & Mortar',             loc:'Yaletown, Vancouver',       price:'$3,500 – $8,000',  pLabel:'venue rental',      cap:'Up to 120 guests', tags:['Historic','Courtyard','Intimate'],         match:91, emoji:'🌿' },
+  { id:3,  cat:'venue',        name:'Grouse Mountain Chalet',    loc:'North Vancouver',           price:'$5,000 – $12,000', pLabel:'venue rental',      cap:'Up to 150 guests', tags:['Mountain views','Scenic','Outdoor'],       match:88, emoji:'⛰️' },
+  { id:4,  cat:'caterer',      name:'Culinary Capers',           loc:'Vancouver',                 price:'$65 – $120',       pLabel:'per person',        cap:'20–500 guests',    tags:['Full service','Award-winning','Dietary'],  match:95, emoji:'🍽️' },
+  { id:5,  cat:'caterer',      name:'Pacific Table',             loc:'Vancouver',                 price:'$55 – $95',        pLabel:'per person',        cap:'30–200 guests',    tags:['Farm-to-table','Local','Seasonal'],        match:90, emoji:'🌾' },
+  { id:6,  cat:'caterer',      name:'Feastify Collective',       loc:'Burnaby & Vancouver',       price:'$45 – $80',        pLabel:'per person',        cap:'50–250 guests',    tags:['Cultural menus','Halal','Multi-cuisine'],  match:85, emoji:'🥘' },
+  { id:7,  cat:'photographer', name:'Studio Atelier',            loc:'Vancouver',                 price:'$4,200 – $7,500',  pLabel:'full day coverage', cap:'Any size',         tags:['Editorial','Film-style','Award-winning'],  match:96, emoji:'📷' },
+  { id:8,  cat:'photographer', name:'Golden Hour Co.',           loc:'Vancouver & Lower Mainland', price:'$3,000 – $5,500', pLabel:'full day coverage', cap:'Any size',         tags:['Candid','Natural light','Warm tones'],     match:93, emoji:'✨' },
+  { id:9,  cat:'photographer', name:'Luminara Photo',            loc:'Vancouver',                 price:'$2,800 – $4,800',  pLabel:'full day coverage', cap:'Any size',         tags:['Modern','Multicultural','Clean'],          match:87, emoji:'🌅' },
+  { id:10, cat:'planner',      name:'Gather Events',             loc:'Vancouver',                 price:'$3,500 – $6,000',  pLabel:'full planning',     cap:'Up to 200 guests', tags:['Full service','Day-of','Luxury'],          match:94, emoji:'📋' },
+  { id:11, cat:'planner',      name:'The Wedding Atelier',       loc:'Vancouver & Victoria',      price:'$2,500 – $5,000',  pLabel:'full planning',     cap:'Any size',         tags:['Boutique','Multicultural','Intimate'],     match:89, emoji:'💐' },
+  { id:12, cat:'planner',      name:'Bloom & Co.',               loc:'Vancouver',                 price:'$1,800 – $3,500',  pLabel:'coordination',      cap:'Up to 150 guests', tags:['Day-of','Budget-friendly','Floral incl.'], match:82, emoji:'🌸' },
+];
+
+let currentCat = 'all';
+const shortlist = new Set();
+
+function renderVendors(cat) {
+  currentCat = cat;
+  const list = cat === 'all' ? vendors : vendors.filter(v => v.cat === cat);
+  document.getElementById('v-count').textContent = list.length + ' vendors found';
+  document.getElementById('vendor-grid').innerHTML = list.map((v, i) => `
+    <div class="vcard" style="animation-delay:${i*0.06}s;">
+      <div class="vcard-img">
+        <span>${v.emoji}</span>
+        <div class="vcard-badge"><span class="tag tag-sage">${v.match}% match</span></div>
+        <button class="vcard-save${shortlist.has(v.id)?' saved':''}" onclick="toggleSave(${v.id},event)">
+          ${shortlist.has(v.id)?'♥':'♡'}
+        </button>
+      </div>
+      <div class="vcard-body">
+        <div class="vcard-cat">${v.cat}</div>
+        <div class="vcard-name">${v.name}</div>
+        <div class="vcard-loc">📍 ${v.loc}</div>
+        <div class="vcard-tags">${v.tags.map(t=>`<span class="tag tag-rose">${t}</span>`).join('')}</div>
+        <div class="vcard-foot">
+          <div><div class="vcard-price">${v.price}</div><div class="vcard-price-lbl">${v.pLabel}</div></div>
+          <div class="vcard-cap">👥 ${v.cap}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSave(id, e) {
+  e.stopPropagation();
+  shortlist.has(id) ? shortlist.delete(id) : shortlist.add(id);
+  renderVendors(currentCat);
+  updateShortlist();
+}
+
+function updateShortlist() {
+  const items = Array.from(shortlist).map(id => vendors.find(v => v.id === id));
+  document.getElementById('sl-count').textContent = shortlist.size + ' saved';
+  document.getElementById('sl-empty').style.display = shortlist.size ? 'none' : 'block';
+  document.getElementById('sl-items').innerHTML = items.map(v => `
+    <div class="sl-item">
+      <div><div class="sl-name">${v.name}</div><div class="sl-cat">${v.cat}</div></div>
+      <button class="sl-remove" onclick="removeSave(${v.id})">×</button>
+    </div>
+  `).join('');
+}
+
+function removeSave(id) {
+  shortlist.delete(id);
+  renderVendors(currentCat);
+  updateShortlist();
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderVendors(cat);
+}
+
+/* ── Chat ─────────────────────────────────────────────── */
+let chatOpen = false;
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+}
+
+const replies = {
+  venue:   ["The Fairmont Pacific Rim has indoor and outdoor options and can seat up to 300 — a great fit for your 80 guests. Book 14–18 months out to secure preferred dates.",
+            "Brix & Mortar in Yaletown is a heritage building with a gorgeous courtyard. It's more budget-friendly than hotel venues and deeply charming for 80 guests."],
+  budget:  ["For 80 guests at $30–50k in Vancouver: roughly 35% venue, 28% catering, 15% photography, 10% flowers, 7% music, 5% planning. Always hold 10% as a buffer.",
+            "Your biggest cost lever is catering — it scales directly with guest count. A brunch reception or shorter cocktail format can meaningfully cut per-person costs."],
+  photo:   ["Studio Atelier is the standout here — editorial film-style work, multicultural experience, and consistently strong reviews. They book 12+ months out.",
+            "Golden Hour Co. has a warmer, more candid approach. Great if you want natural documentary-style coverage rather than highly staged editorial portraits."],
+  book:    ["Venues and photographers are the first to go — aim to book both within 12 months of your date, earlier if your date falls in peak season (May–September)."],
+  default: ["Based on your profile, I'd start with venues — availability fills fast in Vancouver. The Fairmont and Brix & Mortar are both strong fits for 80 guests.",
+            "Happy to dig into any specific category. What's weighing on you most right now?",
+            "For a multicultural wedding, I'd recommend vetting your caterer carefully on cultural menu capability. Pacific Table and Feastify both have strong track records."],
+};
+let ri = 0;
+
+function sendMsg() {
+  const inp = document.getElementById('chat-in');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+  addMsg(text, 'user');
+  showTyping();
+
+  setTimeout(() => {
+    removeTyping();
+    const t = text.toLowerCase();
+    let pool = replies.default;
+    if(t.match(/venue|space|location/)) pool = replies.venue;
+    else if(t.match(/budget|cost|price|\$/)) pool = replies.budget;
+    else if(t.match(/photo|camera|shoot/)) pool = replies.photo;
+    else if(t.match(/when|book|timing/)) pool = replies.book;
+    addMsg(pool[ri++ % pool.length], 'ai');
+  }, 1400);
+}
+
+function useSug(btn) {
+  document.getElementById('chat-in').value = btn.textContent;
+  if(!chatOpen) toggleChat();
+  setTimeout(sendMsg, 80);
+}
+
+function addMsg(text, type) {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'msg ' + type;
+  d.innerHTML = `<div class="msg-avatar">${type==='ai'?'✦':'Y'}</div><div class="bubble">${text}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-msgs');
+  const d = document.createElement('div');
+  d.className = 'msg ai'; d.id = 'typing';
+  d.innerHTML = `<div class="msg-avatar">✦</div><div class="bubble"><div class="typing-dots"><div class="tdot"></div><div class="tdot"></div><div class="tdot"></div></div></div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typing');
+  if(t) t.remove();
+}
+</script>
+</body>
+</html>
