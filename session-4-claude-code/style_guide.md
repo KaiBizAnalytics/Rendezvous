@@ -1,7 +1,7 @@
 # Rendezvous — Style Guide
 
 **Product:** Rendezvous AI Wedding Concierge
-**Version:** 1.0 — derived from design brief session
+**Version:** 1.1 — updated after prototype build session
 
 ---
 
@@ -40,10 +40,23 @@ Rendezvous feels like flipping through a beautiful wedding magazine in a high-en
 | `--color-text-secondary` | `#A89E97` |
 | `--color-border` | `#3A342D` |
 
+### Hero / Photo Overlay Colors
+
+These are used specifically on the landing hero where text sits over the wedding photo. They are not part of the standard light-surface palette.
+
+| Purpose | Value | Usage |
+|---|---|---|
+| Dark veil overlay | `rgba(10,4,8,0.48)` | Top and bottom of hero via gradient |
+| Dark veil midzone | `rgba(10,4,8,0.18)` | Center of hero (let photo breathe) |
+| Radial shadow behind text | `rgba(10,4,8,0.32)` | Centered ellipse behind headline |
+| Heading text-shadow | `rgba(10,4,8,0.70)` | All display text on photo |
+| Lavender cursor light | `rgba(188,162,222,0.26)` | Cursor-following glow on headline text |
+
 ### Rules
-- All colors must be referenced via CSS variables — never hardcoded
+- All colors on light surfaces must be referenced via CSS variables — never hardcoded
 - Dominant warm whites with dusty rose and sage as accents, not co-dominants
 - Avoid: cold whites (#FFFFFF), harsh grays, hot pink, yellow-gold, millennial blush + metallic gold combinations
+- On the hero photo: all text is white (`#fff`) with deep dark text-shadows for legibility — do not use the standard palette text colors here
 
 ---
 
@@ -133,6 +146,33 @@ Motion is a core part of the Rendezvous personality. It should feel expressive, 
 }
 ```
 
+### Cursor Parallax Pattern (JS)
+
+The landing hero uses a smooth lerp cursor-tracking parallax on the background photo. The photo element (`.scene-photo`) is oversized at `inset: -6% -5%` so movement never reveals a gap.
+
+```js
+// Smooth lerp cursor parallax
+var photoBg = document.getElementById('scene-photo');
+var target = {x: 0, y: 0}, cur = {x: 0, y: 0};
+var LERP = 0.055; // lower = smoother/slower
+
+document.addEventListener('mousemove', function(e) {
+  target.x = (e.clientX / window.innerWidth  - 0.5);
+  target.y = (e.clientY / window.innerHeight - 0.5);
+});
+
+function tick() {
+  cur.x += (target.x - cur.x) * LERP;
+  cur.y += (target.y - cur.y) * LERP;
+  photoBg.style.transform =
+    'translate(' + (-cur.x * 38).toFixed(2) + 'px, ' + (-cur.y * 22).toFixed(2) + 'px)';
+  requestAnimationFrame(tick);
+}
+tick();
+```
+
+**Cursor light effects** — two overlay divs (`scene-light`, `text-light`) follow the cursor and update `background` radial-gradients on `mousemove`. `text-light` uses `mix-blend-mode: screen` with a soft lavender (`rgba(188,162,222,...)`) to illuminate headline text as the cursor passes over it.
+
 ---
 
 ## UI Components
@@ -142,8 +182,9 @@ Motion is a core part of the Rendezvous personality. It should feel expressive, 
 - **Primary:** Dusty rose background, deep linen text, `border-radius: 4px`, no border — understated, not loud
 - **Secondary:** Transparent background, `border: 1px solid var(--color-border)`, warm stone text
 - **Ghost / Text:** No background, no border — dusty rose text, underline on hover
+- **Hero CTA (frosted glass pill):** `border-radius: 100px`, `background: rgba(10,4,8,0.30)`, `border: 1px solid rgba(255,255,255,0.45)`, `backdrop-filter: blur(16px)`, white text — used only on the landing hero over a photo background
 - Padding: `12px 28px` for standard, `10px 20px` for small
-- Never use heavy rounded pill buttons (too generic/app-like)
+- Pill buttons (`border-radius: 100px`) are reserved for the hero CTA and bottom-bar actions; do not use on light interior surfaces
 
 ### Inputs & Forms
 
@@ -167,10 +208,22 @@ Motion is a core part of the Rendezvous personality. It should feel expressive, 
 
 - Prefer atmospheric, warm-toned photography — golden hour light, natural textures, human moments
 - Avoid stock-photo-generic imagery (posed couples on white backgrounds)
-- Background treatment: layered CSS gradients are preferred over solid colors
+- Interior surfaces (below the hero fold): layered CSS gradients are preferred over solid colors
   - Example: `background: linear-gradient(160deg, #FAF8F5 0%, #F0E8DC 100%)`
 - Subtle texture overlays (noise, linen grain) add warmth and depth — use at low opacity (`0.03–0.06`)
-- Full-bleed hero images should have a warm gradient overlay to maintain text legibility
+
+### Landing Hero Photo Treatment
+
+The landing hero (`#hero-section`) uses a real wedding photo as a full-bleed parallax background:
+
+1. **Photo element** — `.scene-photo` div at `inset: -6% -5%` (oversized), `will-change: transform`. The `background-image` is set on this element, not on the section itself, so JS can move it.
+2. **Dark overlay** — `::before` pseudo-element with a layered gradient:
+   - `rgba(10,4,8,0.48)` at top and bottom edges (nav and bottom bar legibility)
+   - `rgba(10,4,8,0.18)` in the midzone (let the photo breathe)
+   - `radial-gradient` dark ellipse centered behind the headline
+3. **Text** — always white (`#fff`) with strong `text-shadow` using `rgba(10,4,8,0.70)`. Never use light-surface text colors over the photo.
+4. **Cursor lights** — `scene-light` (warm glow) and `text-light` (lavender, `mix-blend-mode: screen`) overlay divs follow the cursor. See Animation section for implementation.
+5. **Photo file** — `wedding photo.jpg` in the project root. Swap this file to change the hero image.
 
 ---
 

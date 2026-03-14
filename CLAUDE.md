@@ -26,6 +26,10 @@ Rendezvous is an AI-powered wedding planning concierge. The core value propositi
 | `session-4-claude-code/opportunity_solution_tree.md` | OST mapping user problems to solution concepts and assumption tests |
 | `session-4-claude-code/concept_brief_ai_wedding_concierge.md` | Synthesized concept brief covering the full product across both documents |
 | `session-4-claude-code/style_guide.md` | Full visual style guide — colors, typography, spacing, animation, components |
+| `session-4-claude-code/wedding-questionnaire.md` | Source questionnaire defining all intake form fields and options |
+| `index.html` | Live prototype — single-file SPA deployed on Vercel. All UI lives here. |
+| `index-backup.html` | Previous working version of the prototype (safe restore point) |
+| `wedding photo.jpg` | Hero background photo. Replace this file to change the landing hero image. |
 | `Product Discovery/` | Workshop templates, examples, and AI persona prompt files |
 | `Interview/` | Interview snapshots for each of the five user personas |
 
@@ -81,17 +85,43 @@ When generating frontend for Rendezvous, apply these style constraints on top of
 
 **Mood:** Romantic and editorial — feels like flipping through a beautiful wedding magazine. Evokes a rooftop terrace at golden hour: warm light, open air, romantic but relaxed. Never clinical, never corporate.
 
-**Theme:** Light by default with a dark mode option. The light theme is the primary design surface.
+**Theme:** Light by default. Interior views (intake, dashboard, how-it-works) use warm white/champagne surfaces. The landing hero is the exception — it uses a full-bleed photo with dark overlay and white text.
 
-**Color palette:** Soft and timeless. Base in warm whites and champagne. Accent with dusty rose and soft sage. Avoid cold whites, harsh grays, and anything that reads as generic bridal (no hot pink, no millennial blush + gold clichés). CSS variables required for all color tokens.
+**Color palette:** Soft and timeless. Base in warm whites and champagne. Accent with dusty rose (`#C9A49A`) and soft sage (`#8A9E8C`). Avoid cold whites, harsh grays, hot pink, millennial blush + gold. CSS variables required for all color tokens. See `style_guide.md` for the full token set and the hero overlay colors.
 
-**Typography:** Display serif for all headings (consider Fraunces, Cormorant Garamond, or Playfair Display — choose the most editorial option). Clean, refined sans-serif for body and UI text. Strong size contrast between heading and body scales — think magazine hierarchy, not app hierarchy.
+**Typography:** Fraunces (display serif) for all headings — italic weight 200 for the first display line, regular weight 400 for the second. DM Sans for body and UI. Strong size contrast (magazine hierarchy, not app hierarchy).
+
+**Landing hero (implemented):** Full-bleed `wedding photo.jpg` background on a `div.scene-photo` element (`inset: -6% -5%`, `will-change: transform`) driven by a JS cursor-lerp parallax (LERP = 0.055). Dark gradient overlay (`rgba(10,4,8,...)`) ensures text legibility. Two cursor-following light divs: warm scene glow (`scene-light`) and lavender text illumination (`text-light`, `mix-blend-mode: screen`). Minimal top-right text-only nav. Centered two-line serif headline. Frosted glass pill CTA. Dark pill bottom-left + year bottom-right.
 
 **Reference:** Luxury hotel website aesthetic — slow, atmospheric, generous spacing, full-bleed moments. Content breathes. Nothing feels crowded or rushed.
 
-**Animation:** Expressive — motion is part of the personality. Page load should feel like a reveal. Use staggered entrance animations, slow elegant transitions, and micro-interactions that reward attention. CSS-only preferred; Motion library if React is used.
+**Animation:** Staggered entrance animations on page load (`.r`, `.r1`–`.r6` classes with `animation-delay`). Cursor parallax on the hero. Slow elegant transitions (`0.4s–0.8s`). CSS-only preferred.
 
 **The vibe in one sentence:** A rooftop at golden hour — romantic, editorial, unhurried, and just a little magical.
+
+---
+
+## Prototype Architecture (index.html)
+
+`index.html` is a single-file SPA. Key structural patterns:
+
+**View system** — Five views: `view-landing`, `view-howitworks`, `view-intake`, `view-generating`, `view-dashboard`. The `show(id)` function switches between them with an opacity fade. Navigation functions: `goHome()`, `goHowItWorks()`, `goIntake()`.
+
+**Intake form** — 4-step wizard. `goStep(n)` manages step dots, left-panel copy (`lc1`–`lc4`), and form panels (`fs1`–`fs4`). The profile state object holds all collected fields:
+```js
+const profile = { name1, name2, email, phone, date, flexibility, city, venueStatus, venueName, setting, guests, budget, priority, style, colors, dietary, cultural }
+```
+`startGen()` collects form values into `profile` and starts the generating view. `editProfile()` restores profile values to the form for re-editing from the dashboard.
+
+**Questionnaire coverage** — The 4 intake steps map to the questionnaire sections in `wedding-questionnaire.md`:
+- Step 1: Client Information + The Date
+- Step 2: The Location + Guest List
+- Step 3: Budget
+- Step 4: Style & Vision + Optional Details
+
+**Fonts** — Fraunces + DM Sans loaded from Google Fonts in `<head>`.
+
+**Deployment** — Vercel static deploy. `index.html` at root is the entry point. `wedding photo.jpg` must be in the same directory.
 
 ---
 
