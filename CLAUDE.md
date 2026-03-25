@@ -22,13 +22,13 @@ Rendezvous is an AI-powered wedding planning concierge. The core value propositi
 
 | File | Purpose |
 |---|---|
-| `session-4-claude-code/rendezvous_mvp_prd.md` | Full MVP PRD — source of truth for features, scope, user flow, metrics, and risks |
-| `session-4-claude-code/opportunity_solution_tree.md` | OST mapping user problems to solution concepts and assumption tests |
-| `session-4-claude-code/concept_brief_ai_wedding_concierge.md` | Synthesized concept brief covering the full product across both documents |
-| `session-4-claude-code/style_guide.md` | Full visual style guide — colors, typography, spacing, animation, components |
-| `session-4-claude-code/wedding-questionnaire.md` | Source questionnaire defining all intake form fields and options |
-| `session-4-claude-code/vancouver_wedding_venues.md` | Source of truth for all 38 Vancouver vendor records — used to populate and enrich vendor data |
-| `session-4-claude-code/build_progress.md` | Running log of features shipped, design decisions, and current status |
+| `docs/rendezvous_mvp_prd.md` | Full MVP PRD — source of truth for features, scope, user flow, metrics, and risks |
+| `docs/opportunity_solution_tree.md` | OST mapping user problems to solution concepts and assumption tests |
+| `docs/concept_brief_ai_wedding_concierge.md` | Synthesized concept brief covering the full product across both documents |
+| `docs/style_guide.md` | Full visual style guide — colors, typography, spacing, animation, components |
+| `docs/wedding-questionnaire.md` | Source questionnaire defining all intake form fields and options |
+| `docs/vancouver_wedding_venues.md` | Source of truth for all 38 Vancouver vendor records — used to populate and enrich vendor data |
+| `docs/build_progress.md` | Running log of features shipped, design decisions, and current status |
 | `index.html` | Live prototype — single-file SPA deployed on Vercel. All UI lives here. |
 | `index-backup.html` | Previous working version of the prototype (safe restore point) |
 | `api/generate-image.js` | Vercel serverless function — calls OpenAI `gpt-image-1` to generate the vision board scene |
@@ -138,7 +138,7 @@ const profile = { name1, name2, email, phone, date, flexibility, city, venueStat
 
 ## Working Conventions
 
-- The primary output format for product artifacts is Markdown (`.md`), saved into `session-4-claude-code/`.
+- The primary output format for product artifacts is Markdown (`.md`), saved into `docs/`.
 - Interview transcripts and workshop outputs are stored as `.docx` files — read them with the Read tool (supports `.docx`).
 - When generating new product artifacts, ground them in the PRD and OST rather than inventing requirements.
 - The PRD is the authoritative scope document. If there is a conflict between the OST and PRD, defer to the PRD.

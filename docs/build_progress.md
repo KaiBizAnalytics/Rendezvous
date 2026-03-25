@@ -140,7 +140,7 @@ All 38 venue records now include:
 |---|---|
 | `index.html` | Entire frontend — all views, state, vendor data, scoring logic, API calls |
 | `api/generate-image.js` | Serverless function — prompt engineering + gpt-image-1 API call |
-| `session-4-claude-code/vancouver_wedding_venues.md` | Source data for vendor enrichment |
-| `session-4-claude-code/style_guide.md` | Design token reference |
-| `session-4-claude-code/wedding-questionnaire.md` | Intake field definitions |
-| `session-4-claude-code/rendezvous_mvp_prd.md` | Feature scope authority |
+| `docs/vancouver_wedding_venues.md` | Source data for vendor enrichment |
+| `docs/style_guide.md` | Design token reference |
+| `docs/wedding-questionnaire.md` | Intake field definitions |
+| `docs/rendezvous_mvp_prd.md` | Feature scope authority |

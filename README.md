@@ -42,18 +42,18 @@ A couple-first AI concierge that inverts the discovery model:
 | [`wedding photo.jpg`](wedding%20photo.jpg) | Hero background photo for the landing page |
 | [`CLAUDE.md`](CLAUDE.md) | Claude Code workspace instructions |
 
-### `session-4-claude-code/`
+### `docs/`
 
 | File | Description |
 |---|---|
-| [`rendezvous_mvp_prd.md`](session-4-claude-code/rendezvous_mvp_prd.md) | Full MVP Product Requirements Document |
-| [`opportunity_solution_tree.md`](session-4-claude-code/opportunity_solution_tree.md) | OST mapping user problems to solution concepts |
-| [`concept_brief_ai_wedding_concierge.md`](session-4-claude-code/concept_brief_ai_wedding_concierge.md) | Synthesised concept brief |
-| [`style_guide.md`](session-4-claude-code/style_guide.md) | Full visual style guide — colours, typography, spacing, animation |
-| [`market_analysis.md`](session-4-claude-code/market_analysis.md) | Competitive analysis of major wedding platforms |
-| [`vancouver_wedding_venues.md`](session-4-claude-code/vancouver_wedding_venues.md) | Source data for all 38 Vancouver vendors |
-| [`wedding-questionnaire.md`](session-4-claude-code/wedding-questionnaire.md) | Intake questionnaire field definitions |
-| [`build_progress.md`](session-4-claude-code/build_progress.md) | Running log of build decisions, features shipped, and current status |
+| [`rendezvous_mvp_prd.md`](docs/rendezvous_mvp_prd.md) | Full MVP Product Requirements Document |
+| [`opportunity_solution_tree.md`](docs/opportunity_solution_tree.md) | OST mapping user problems to solution concepts |
+| [`concept_brief_ai_wedding_concierge.md`](docs/concept_brief_ai_wedding_concierge.md) | Synthesised concept brief |
+| [`style_guide.md`](docs/style_guide.md) | Full visual style guide — colours, typography, spacing, animation |
+| [`market_analysis.md`](docs/market_analysis.md) | Competitive analysis of major wedding platforms |
+| [`vancouver_wedding_venues.md`](docs/vancouver_wedding_venues.md) | Source data for all 38 Vancouver vendors |
+| [`wedding-questionnaire.md`](docs/wedding-questionnaire.md) | Intake questionnaire field definitions |
+| [`build_progress.md`](docs/build_progress.md) | Running log of build decisions, features shipped, and current status |
 
 ### `Product Discovery/` and `Interview/`
 
@@ -101,7 +101,7 @@ All 38 vendor records include:
 
 **Motion:** Staggered entrance animations, cursor parallax hero, slow elegant transitions.
 
-See [`style_guide.md`](session-4-claude-code/style_guide.md) for the full specification.
+See [`style_guide.md`](docs/style_guide.md) for the full specification.
 
 ---
 
