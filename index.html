@@ -1696,15 +1696,23 @@ function scoreVendor(v) {
   if (styleHits.length >= 2) { score += 14; reasons.push(styleHits[0] + ' matches your vibe'); }
   else if (styleHits.length === 1) { score += 7; reasons.push(styleHits[0] + ' aesthetic'); }
 
-  // 4. Setting match (venues)
-  if (v.cat === 'venue' && profile.setting) {
-    if (profile.setting === 'Outdoor' && v.tags.some(t => OUTDOOR_TAGS.includes(t))) {
-      score += 9; reasons.push('Outdoor setting');
-    } else if (profile.setting === 'Indoor' && v.tags.some(t => INDOOR_TAGS.includes(t))) {
-      score += 9; reasons.push('Indoor venue');
-    } else if (profile.setting === 'Mix of both') {
-      score += 4;
+  // 4. Setting match (venues) — use the dedicated v.setting field, penalise mismatches
+  if (v.cat === 'venue' && profile.setting && v.setting) {
+    const want = profile.setting; // 'Outdoor' | 'Indoor' | 'Mix of both' | 'No preference'
+    const has  = v.setting;       // 'Outdoor' | 'Indoor' | 'Mixed'
+    if (want === 'Outdoor') {
+      if (has === 'Outdoor')     { score += 14; reasons.push('Outdoor venue'); }
+      else if (has === 'Mixed')  { score += 6;  reasons.push('Partly outdoor'); }
+      else                       { score -= 14; } // Indoor-only when user wants outdoor
+    } else if (want === 'Indoor') {
+      if (has === 'Indoor')      { score += 14; reasons.push('Indoor venue'); }
+      else if (has === 'Mixed')  { score += 6;  reasons.push('Indoor option available'); }
+      else                       { score -= 14; }
+    } else if (want === 'Mix of both') {
+      if (has === 'Mixed')       { score += 14; reasons.push('Indoor & outdoor spaces'); }
+      else                       { score += 4; }
     }
+    // 'No preference' — no adjustment
   }
 
   // 5. Priority category boost
