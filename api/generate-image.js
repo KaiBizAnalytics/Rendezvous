@@ -13,10 +13,28 @@ const STYLE_DESCRIPTORS = {
 };
 
 const SETTING_MAP = {
-  'Indoor':        'indoor',
+  'Indoor':        'indoor ballroom or hall',
   'Outdoor':       'outdoor',
-  'Mix of both':   'semi-outdoor',
+  'Mix of both':   'semi-outdoor covered terrace',
   'No preference': 'outdoor',
+};
+
+// Budget tier → decor scale description
+const BUDGET_SCALE = {
+  budget:  'simple and elegantly understated',
+  mid:     'well-appointed with tasteful floral accents',
+  premium: 'lavish with elaborate decorations and premium finishes',
+  luxury:  'ultra-luxury opulent with grand floral installations and statement pieces',
+};
+
+// Top spending priority → visual feature to emphasise
+const PRIORITY_EMPHASIS = {
+  'Venue':               'dramatic architectural ceremony space as the centrepiece',
+  'Flowers & Décor':     'elaborate floral installations and lush overhead floral canopy',
+  'Photography & Video': '',
+  'Catering & Drinks':   'beautifully styled tables with elegant place settings visible in background',
+  'Music / Entertainment': '',
+  'MC & Host':           '',
 };
 
 function getSeason(dateStr) {
@@ -36,13 +54,29 @@ function parseGuestMid(g) {
   return +nums[0];
 }
 
+// Derive budget tier from live total (post-vision-board edit) or original budget string
+function parseBudgetTier(profile) {
+  const live = Number(profile.liveBudget) || 0;
+  const b = live > 0 ? live : (() => {
+    const s = (profile.budget || '').replace(/,/g, '');
+    const nums = s.match(/\d+/g);
+    return nums ? Math.max(...nums.map(Number)) : 0;
+  })();
+  if (b <= 0)      return 'mid';
+  if (b < 25000)   return 'budget';
+  if (b < 60000)   return 'mid';
+  if (b < 100000)  return 'premium';
+  return 'luxury';
+}
+
 function buildPrompt(profile) {
   const styleDesc = STYLE_DESCRIPTORS[profile.style] || 'romantic, soft floral arrangements';
   const setting   = SETTING_MAP[profile.setting] || 'outdoor';
   const season    = getSeason(profile.date);
   const guests    = parseGuestMid(profile.guests);
+  const tier      = parseBudgetTier(profile);
+  const scale     = BUDGET_SCALE[tier];
 
-  // Palette: use user's input if provided, else derive a sensible default from style
   const defaultPalettes = {
     'Elegant & Formal':    'white and gold',
     'Rustic & Natural':    'ivory and terracotta',
@@ -53,15 +87,24 @@ function buildPrompt(profile) {
   };
   const palette = profile.colors || defaultPalettes[profile.style] || 'white and blush';
 
-  // Base — photorealism anchor at the front, same pattern as the proven sample prompt
-  let prompt =
-    `A photorealistic wedding ceremony setup, no people, refined ceremony arch, clean composition. ` +
-    `STYLE: ${styleDesc}, ${palette} palette. ` +
-    `SETTING: ${setting}. SEASON: ${season}. ` +
-    `Guests: ${guests} persons. ` +
-    `Photo orientation: landscape.`;
+  // Guest count → scale label
+  let guestScale;
+  if      (guests <= 30)  guestScale = 'intimate micro-wedding';
+  else if (guests <= 75)  guestScale = 'intimate wedding';
+  else if (guests <= 120) guestScale = 'medium wedding';
+  else                    guestScale = 'large wedding';
 
-  // Append cultural note if provided
+  let prompt =
+    `A photorealistic wedding ceremony, no people, wide establishing shot showing the full ceremony space and aisle from guest perspective, clean composition. ` +
+    `STYLE: ${styleDesc}, ${palette} palette, ${scale} decor. ` +
+    `SETTING: ${setting}. SEASON: ${season}. ` +
+    `SCALE: ${guestScale} (${guests} guests). ` +
+    `CAMERA: wide-angle lens, full scene in frame, not a close-up. ` +
+    `Photo orientation: landscape 16:9.`;
+
+  const priorityNote = PRIORITY_EMPHASIS[profile.priority] || '';
+  if (priorityNote) prompt += ` FEATURE: ${priorityNote}.`;
+
   if (profile.cultural) {
     prompt += ` Subtle ${profile.cultural} cultural design elements incorporated into the decor.`;
   }
@@ -90,7 +133,7 @@ module.exports = async function handler(req, res) {
       model:   'gpt-image-1',
       prompt,
       size:    '1536x1024',
-      quality: 'medium',
+      quality: 'high',
       n:       1,
     });
 
