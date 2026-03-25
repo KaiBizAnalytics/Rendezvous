@@ -886,6 +886,7 @@
   <nav class="intake-nav">
     <button class="logo" onclick="goHome()">Rendez<span>vous</span></button>
     <div class="intake-nav-right">
+      <button id="intake-back-dash" class="btn btn-secondary" style="display:none" onclick="goToDashboard()">← Back to dashboard</button>
       <span class="label">Step <span id="step-num">1</span> of 3</span>
     </div>
   </nav>
@@ -1390,6 +1391,7 @@ function editProfile() {
       btn.classList.toggle('on', btn.querySelector('.style-opt-name').textContent === profile.style);
     });
   }
+  document.getElementById('intake-back-dash').style.display = 'inline-flex';
   show('intake');
   goStep(1);
 }
@@ -1480,6 +1482,7 @@ function startGen() {
   profile.topVenueTags = topVenueResult ? topVenueResult.tags : [];
   profile.liveBudget   = 0; // reset — vision board hasn't been adjusted yet
 
+  document.getElementById('intake-back-dash').style.display = 'none';
   ['g1','g2','g3','g4'].forEach(id => document.getElementById(id).classList.remove('done'));
   document.getElementById('gen-pbar').style.width = '0%';
   show('generating');

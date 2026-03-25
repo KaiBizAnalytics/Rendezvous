@@ -104,7 +104,7 @@ function buildPrompt(profile) {
   let prompt =
     `A photorealistic wedding ceremony, no people, wide establishing shot showing the full ceremony space and aisle from guest perspective, clean composition. ` +
     `STYLE: ${styleDesc}, ${palette} palette, ${scale} decor. ` +
-    `VENUE: ${venueDesc}. SEASON: ${season}. ` +
+    `SETTING: ${setting}. VENUE: ${venueDesc}. SEASON: ${season}. ` +
     `SCALE: ${guestScale} (${guests} guests). ` +
     `CAMERA: wide-angle lens, full scene in frame, not a close-up. ` +
     `Photo orientation: landscape 16:9.`;
