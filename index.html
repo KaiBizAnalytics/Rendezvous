@@ -1446,7 +1446,8 @@ async function fetchSceneImage(prof) {
         style: prof.style, setting: prof.setting, date: prof.date,
         colors: prof.colors, cultural: prof.cultural,
         guests: prof.guests, budget: prof.budget, priority: prof.priority,
-        city: prof.city, liveBudget: prof.liveBudget || 0
+        city: prof.city, liveBudget: prof.liveBudget || 0,
+        topVenue: prof.topVenue || null, topVenueTags: prof.topVenueTags || []
       })
     });
     if (!res.ok) throw new Error('API ' + res.status);
@@ -1472,6 +1473,12 @@ function startGen() {
   profile.dietary     = document.getElementById('f-dietary').value;
   const styleEl       = document.querySelector('.style-opt.on');
   profile.style       = styleEl ? styleEl.querySelector('.style-opt-name').textContent : '';
+
+  // Find the top recommended venue for this profile and use it to anchor the vision board image
+  const topVenueResult = topN(vendors.filter(v => v.cat === 'venue'), 1)[0];
+  profile.topVenue     = topVenueResult ? topVenueResult.name : null;
+  profile.topVenueTags = topVenueResult ? topVenueResult.tags : [];
+  profile.liveBudget   = 0; // reset — vision board hasn't been adjusted yet
 
   ['g1','g2','g3','g4'].forEach(id => document.getElementById(id).classList.remove('done'));
   document.getElementById('gen-pbar').style.width = '0%';
@@ -1970,6 +1977,11 @@ function regenScene() {
 
   // Inject live budget total so the regenerated image reflects vision board adjustments
   profile.liveBudget = currentAmounts.slice(1).reduce((a, b) => a + b, 0);
+
+  // Re-score venues with updated budget — top pick may have changed after user's adjustments
+  const regenTopVenue = topN(vendors.filter(v => v.cat === 'venue'), 1)[0];
+  profile.topVenue     = regenTopVenue ? regenTopVenue.name : profile.topVenue;
+  profile.topVenueTags = regenTopVenue ? regenTopVenue.tags : profile.topVenueTags;
 
   // Call DALL-E for a fresh image; fall back to local alternate on failure
   fetchSceneImage(profile).then(imageUrl => {
