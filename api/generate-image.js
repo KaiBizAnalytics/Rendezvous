@@ -2,20 +2,21 @@ const OpenAI = require('openai');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const STYLE_MAP = {
-  'Elegant & Formal':    'elegant formal black-tie',
-  'Rustic & Natural':    'rustic natural barn',
-  'Boho & Whimsical':    'bohemian whimsical free-spirited',
-  'Modern & Minimalist': 'modern minimalist architectural',
-  'Romantic & Floral':   'romantic lush floral garden',
-  'Fun & Laid-back':     'relaxed fun casual',
+// Style → descriptor phrases that steer toward realism, not fantasy
+const STYLE_DESCRIPTORS = {
+  'Elegant & Formal':    'elegant, structured symmetry, refined luxury decor',
+  'Rustic & Natural':    'rustic, organic wood and greenery, natural earthy textures',
+  'Boho & Whimsical':    'bohemian, relaxed layering, pampas grass and wildflower arrangements',
+  'Modern & Minimalist': 'modern minimalist, clean lines, architectural simplicity',
+  'Romantic & Floral':   'romantic, lush floral arrangements, garden-inspired soft florals',
+  'Fun & Laid-back':     'casual and warm, festive relaxed atmosphere, colourful accents',
 };
 
 const SETTING_MAP = {
-  'Indoor':       'indoor',
-  'Outdoor':      'outdoor',
-  'Mix of both':  'semi-outdoor',
-  'No preference':'outdoor',
+  'Indoor':        'indoor',
+  'Outdoor':       'outdoor',
+  'Mix of both':   'semi-outdoor',
+  'No preference': 'outdoor',
 };
 
 function getSeason(dateStr) {
@@ -27,34 +28,45 @@ function getSeason(dateStr) {
   return 'winter';
 }
 
+function parseGuestMid(g) {
+  if (!g) return 80;
+  const nums = g.match(/\d+/g);
+  if (!nums) return 80;
+  if (nums.length >= 2) return Math.round((+nums[0] + +nums[1]) / 2);
+  return +nums[0];
+}
+
 function buildPrompt(profile) {
-  const style   = STYLE_MAP[profile.style]     || 'romantic elegant';
-  const setting = SETTING_MAP[profile.setting] || 'outdoor';
-  const season  = getSeason(profile.date);
+  const styleDesc = STYLE_DESCRIPTORS[profile.style] || 'romantic, soft floral arrangements';
+  const setting   = SETTING_MAP[profile.setting] || 'outdoor';
+  const season    = getSeason(profile.date);
+  const guests    = parseGuestMid(profile.guests);
 
-  const parts = [
-    `A stunning ${style} ${setting} wedding ceremony scene in ${season}`,
-    'Wide-angle view of the ceremony setup',
-    'Beautifully decorated aisle, floral arch, draped fabric, candles or lanterns',
-    'Empty ceremony — no people, no guests, no wedding party',
-    'Warm soft natural lighting, golden hour atmosphere',
-    'Photorealistic editorial wedding photography style',
-    'Ultra high resolution, shallow depth of field',
-  ];
+  // Palette: use user's input if provided, else derive a sensible default from style
+  const defaultPalettes = {
+    'Elegant & Formal':    'white and gold',
+    'Rustic & Natural':    'ivory and terracotta',
+    'Boho & Whimsical':    'dusty rose and sage',
+    'Modern & Minimalist': 'white and charcoal',
+    'Romantic & Floral':   'blush pink and cream',
+    'Fun & Laid-back':     'coral and white',
+  };
+  const palette = profile.colors || defaultPalettes[profile.style] || 'white and blush';
 
-  if (profile.colors) {
-    parts.push(`Colour palette: ${profile.colors}`);
-  }
+  // Base — photorealism anchor at the front, same pattern as the proven sample prompt
+  let prompt =
+    `A photorealistic wedding ceremony setup, no people, refined ceremony arch, clean composition. ` +
+    `STYLE: ${styleDesc}, ${palette} palette. ` +
+    `SETTING: ${setting}. SEASON: ${season}. ` +
+    `Guests: ${guests} persons. ` +
+    `Photo orientation: landscape.`;
+
+  // Append cultural note if provided
   if (profile.cultural) {
-    parts.push(`Subtle cultural design elements: ${profile.cultural}`);
-  }
-  if (profile.setting === 'Indoor') {
-    parts.push('Grand interior with high ceilings, elegant drapery, ambient lighting');
-  } else {
-    parts.push('Lush greenery, natural landscape backdrop');
+    prompt += ` Subtle ${profile.cultural} cultural design elements incorporated into the decor.`;
   }
 
-  return parts.join('. ') + '.';
+  return prompt;
 }
 
 module.exports = async function handler(req, res) {
