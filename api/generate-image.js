@@ -86,18 +86,23 @@ module.exports = async function handler(req, res) {
     const prompt = buildPrompt(req.body || {});
     console.log('Generating image with prompt:', prompt);
 
-    const response = await openai.images.generate({
-      model:   'dall-e-3',
-      prompt,
-      size:    '1792x1024',
-      quality: 'standard',
-      n:       1,
+    const response = await openai.responses.create({
+      model: 'gpt-image-1',
+      input: prompt,
+      tools: [{ type: 'image_generation', size: '1536x1024', quality: 'standard' }],
     });
 
-    const url = response.data[0].url;
+    // Extract the base64 image from the response output
+    const imageBlock = response.output.find(block => block.type === 'image_generation_call');
+    if (!imageBlock || !imageBlock.result) {
+      throw new Error('No image returned from gpt-image-1');
+    }
+
+    // Return as a data URI so the frontend can use it identically to a URL
+    const url = `data:image/png;base64,${imageBlock.result}`;
     res.status(200).json({ url, prompt });
   } catch (err) {
-    console.error('DALL-E error:', err?.message || err);
+    console.error('Image generation error:', err?.message || err);
     res.status(500).json({ error: 'Image generation failed', detail: err?.message });
   }
 };
