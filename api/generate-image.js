@@ -86,20 +86,19 @@ module.exports = async function handler(req, res) {
     const prompt = buildPrompt(req.body || {});
     console.log('Generating image with prompt:', prompt);
 
-    const response = await openai.responses.create({
-      model: 'gpt-image-1',
-      input: prompt,
-      tools: [{ type: 'image_generation', size: '1536x1024', quality: 'standard' }],
+    const response = await openai.images.generate({
+      model:   'gpt-image-1',
+      prompt,
+      size:    '1536x1024',
+      quality: 'standard',
+      n:       1,
     });
 
-    // Extract the base64 image from the response output
-    const imageBlock = response.output.find(block => block.type === 'image_generation_call');
-    if (!imageBlock || !imageBlock.result) {
-      throw new Error('No image returned from gpt-image-1');
-    }
+    // gpt-image-1 returns base64 (no URL option)
+    const b64 = response.data[0].b64_json;
+    if (!b64) throw new Error('No image data returned from gpt-image-1');
 
-    // Return as a data URI so the frontend can use it identically to a URL
-    const url = `data:image/png;base64,${imageBlock.result}`;
+    const url = `data:image/png;base64,${b64}`;
     res.status(200).json({ url, prompt });
   } catch (err) {
     console.error('Image generation error:', err?.message || err);
