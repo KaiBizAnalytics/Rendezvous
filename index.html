@@ -1508,26 +1508,34 @@ function startGen() {
 
   document.getElementById('intake-back-dash').style.display = 'none';
   ['g1','g2','g3','g4'].forEach(id => document.getElementById(id).classList.remove('done'));
-  document.getElementById('gen-pbar').style.width = '0%';
+  const pbar = document.getElementById('gen-pbar');
+  pbar.style.transition = 'none';
+  pbar.style.width = '0%';
   show('generating');
 
-  // Run progress animation steps
-  const progSteps = [20, 45, 72, 95];
-  ['g1','g2','g3','g4'].forEach((id, i) => {
+  // Spread step reveals across the expected 15-20s API duration
+  const progSteps  = [15, 38, 62, 82];
+  const progDelays = [800, 4000, 8000, 13000];
+  const stepIds    = ['g1','g2','g3','g4'];
+  const genTimers  = progSteps.map((pct, i) =>
     setTimeout(() => {
-      document.getElementById(id).classList.add('done');
-      document.getElementById('gen-pbar').style.width = progSteps[i] + '%';
-    }, 700 + i * 750);
-  });
+      document.getElementById(stepIds[i]).classList.add('done');
+      pbar.style.transition = 'width 0.8s var(--ease)';
+      pbar.style.width = pct + '%';
+    }, progDelays[i])
+  );
 
-  // Start API call and minimum animation wait in parallel
-  const minWait   = new Promise(r => setTimeout(r, 4000));
-  const imageCall = fetchSceneImage(profile);
-
-  Promise.all([minWait, imageCall]).then(([, imageUrl]) => {
-    renderVisionBoard(imageUrl);  // passes API url (or null → fallback)
-    openVisionBoard();
-    prepareDashboard();
+  // Start API call
+  fetchSceneImage(profile).then(imageUrl => {
+    genTimers.forEach(clearTimeout);
+    pbar.style.transition = 'width 0.5s var(--ease)';
+    pbar.style.width = '100%';
+    // Brief pause so user sees 100% before transition
+    setTimeout(() => {
+      renderVisionBoard(imageUrl);
+      openVisionBoard();
+      prepareDashboard();
+    }, 400);
   });
 }
 
