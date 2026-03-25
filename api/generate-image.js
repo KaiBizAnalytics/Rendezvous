@@ -139,7 +139,7 @@ module.exports = async function handler(req, res) {
     const response = await openai.images.generate({
       model:   'gpt-image-1',
       prompt,
-      size:    '1920x1080',
+      size:    '1536x1024',
       quality: 'medium',
       n:       1,
     });
