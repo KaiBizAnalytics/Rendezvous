@@ -90,7 +90,7 @@ module.exports = async function handler(req, res) {
       model:   'gpt-image-1',
       prompt,
       size:    '1536x1024',
-      quality: 'standard',
+      quality: 'medium',
       n:       1,
     });
 
