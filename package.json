@@ -1,0 +1,8 @@
+{
+  "name": "rendezvous",
+  "version": "1.0.0",
+  "dependencies": {
+    "@claude-flow/guidance": "^3.0.0-alpha.1",
+    "openai": "^4.104.0"
+  }
+}

@@ -121,7 +121,7 @@
     /* Photo layer — oversized so parallax movement never shows a gap */
     .scene-photo {
       position: absolute; inset: -6% -5%;
-      background-image: url('wedding photo.jpg');
+      background-image: url('cover_photo.jpg');
       background-size: cover; background-position: center;
       will-change: transform; z-index: 0;
     }
@@ -438,14 +438,25 @@
     .dash-greeting { font-family: var(--serif); font-size: 20px; font-weight: 400; }
     .dash-actions { display: flex; gap: 10px; align-items: center; }
 
-    .cat-nav { display: flex; gap: 2px; padding: 22px 40px 0; }
-    .cat-btn { padding: 8px 18px; border-radius: 4px; font-size: 13px; font-weight: 500; border: 1px solid transparent; background: transparent; color: var(--muted); transition: all 0.25s ease-out; }
+    .cat-nav { display: flex; gap: 2px; padding: 22px 40px 0; flex-wrap: wrap; }
+    .cat-btn { padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 500; border: 1px solid transparent; background: transparent; color: var(--muted); transition: all 0.25s ease-out; white-space: nowrap; }
     .cat-btn:hover { color: var(--text-2); background: var(--surface); }
     .cat-btn.active { background: var(--surface); border-color: var(--border); color: var(--text); }
 
     .vendor-section { padding: 28px 40px 60px; }
     .vendor-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 22px; }
     .vendor-count { font-size: 13px; color: var(--muted); }
+
+    /* Category group headers (All view) */
+    .vendor-group { margin-bottom: 40px; grid-column: 1 / -1; }
+    .vendor-group-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+    .vendor-group-title { font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--text); }
+    .vendor-group-count { font-size: 12px; color: var(--muted); }
+
+    /* Match reasons on cards */
+    .vcard-reasons { display: flex; flex-direction: column; gap: 3px; margin-bottom: 11px; }
+    .vcard-reason { font-size: 11px; color: var(--sage); font-weight: 500; display: flex; align-items: center; gap: 4px; }
+    .vcard-reason::before { content: '✓'; font-size: 10px; }
 
     .vendor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; }
 
@@ -537,7 +548,7 @@
       box-shadow: 0 4px 24px rgba(10,4,8,0.35);
     }
     .vb-callout:hover { transform: translateY(-2px); box-shadow: 0 8px 36px rgba(10,4,8,0.45); }
-    .vb-callout.expanded { min-width: 200px; }
+    .vb-callout.expanded { min-width: 200px; z-index: 20; }
 
     .vb-c-label { font-size: 10px; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-2); margin-bottom: 3px; }
     .vb-c-amount { font-family: var(--serif); font-size: 22px; font-weight: 400; color: var(--text); line-height: 1; }
@@ -555,32 +566,46 @@
     .vb-c-tier.active { background: rgba(201,164,154,0.12); border-color: var(--rose); color: var(--text); }
     .vb-c-tier strong { display: block; font-size: 12px; font-weight: 500; color: var(--text); }
 
-    /* Callout positions (percentages of scene container) */
-    .vb-c1 { top: 8%;  left: 3%; }
-    .vb-c2 { top: 6%;  right: 4%; }
-    .vb-c3 { top: 46%; right: 3%; }
-    .vb-c4 { bottom: 18%; left: 3%; }
-    .vb-c5 { bottom: 10%; left: 50%; transform: translateX(-50%); }
+    /* Callout positions — 3 rows × 2 columns, evenly distributed */
+    .vb-c1 { top: 6%;     left: 2%; }   /* Venue & Setup       — top left     */
+    .vb-c2 { top: 6%;     right: 2%; }  /* Florals & Décor     — top right    */
+    .vb-c6 { top: 42%;    left: 2%; }   /* Catering & Drinks   — mid left     */
+    .vb-c3 { top: 42%;    right: 2%; }  /* Photography & Video — mid right    */
+    .vb-c4 { bottom: 8%;  left: 2%; }   /* Music & DJ          — bottom left  */
+    .vb-c5 { bottom: 8%;  right: 2%; }  /* MC & Host           — bottom right */
 
     /* Budget bar */
     .vb-budget-bar {
-      flex-shrink: 0; padding: 14px 40px 18px;
+      flex-shrink: 0; padding: 18px 40px 22px;
       border-top: 1px solid rgba(255,255,255,0.07);
     }
     .vb-bar-track {
-      display: flex; height: 5px; border-radius: 3px; overflow: hidden; margin-bottom: 10px;
+      display: flex; height: 14px; border-radius: 7px; overflow: hidden; margin-bottom: 14px;
     }
     .vb-bar-seg { height: 100%; transition: width 0.5s var(--ease); }
-    .vb-seg-venue  { background: var(--rose); }
-    .vb-seg-photo  { background: #B8956A; }
-    .vb-seg-floral { background: var(--sage); }
-    .vb-seg-music  { background: #8A9EB8; }
-    .vb-seg-mc     { background: #9E8AAA; }
+    .vb-seg-venue    { background: var(--rose); }
+    .vb-seg-photo    { background: #B8956A; }
+    .vb-seg-floral   { background: var(--sage); }
+    .vb-seg-music    { background: #8A9EB8; }
+    .vb-seg-mc       { background: #9E8AAA; }
+    .vb-seg-catering { background: #7FB5A0; }
 
-    .vb-bar-labels { display: flex; gap: 20px; flex-wrap: wrap; }
-    .vb-bar-label { display: flex; align-items: center; gap: 6px; font-size: 11px; color: rgba(245,237,216,0.55); }
-    .vb-bar-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .vb-bar-label strong { color: rgba(245,237,216,0.85); font-weight: 500; }
+    .vb-bar-labels { display: flex; gap: 24px; flex-wrap: wrap; }
+    .vb-bar-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(245,237,216,0.65); }
+    .vb-bar-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .vb-bar-label strong { color: rgba(245,237,216,0.92); font-weight: 600; }
+
+    /* Custom budget input inside callout */
+    .vb-c-input {
+      width: 100%; box-sizing: border-box; margin-top: 10px;
+      padding: 7px 10px; border-radius: 6px;
+      border: 1px solid rgba(44,36,32,0.20);
+      background: rgba(255,255,255,0.82);
+      font-family: var(--sans); font-size: 13px; color: var(--text);
+      outline: none; transition: border-color 0.2s;
+    }
+    .vb-c-input:focus { border-color: var(--rose); }
+    .vb-c-input-label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); display: block; margin-top: 10px; margin-bottom: 3px; }
 
     /* Generating — updated for Vision Board */
     .gen-progress { width: 200px; height: 2px; background: rgba(201,164,154,0.2); border-radius: 1px; margin: 8px 0 16px; overflow: hidden; }
@@ -596,7 +621,7 @@
     .vb-summary-card:hover { box-shadow: 0 6px 28px rgba(44,36,32,0.10); }
     .vb-summary-thumb {
       width: 120px; flex-shrink: 0;
-      background: url('wedding photo.jpg') center/cover;
+      background: url('wedding_ceremony_pics/summer_outdoor_romantic.png') center/cover;
     }
     .vb-summary-body {
       flex: 1; padding: 16px 20px; background: var(--surface);
@@ -617,6 +642,43 @@
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Export PDF print layout ── */
+    .vb-export-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: 100px;
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.18);
+      font-family: var(--sans); font-size: 12px; font-weight: 500; letter-spacing: 0.04em;
+      color: rgba(245,237,216,0.75); cursor: pointer; transition: all 0.3s ease-out;
+    }
+    .vb-export-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    #vb-pdf-view { display: none; }
+
+    @media print {
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      body > * { display: none !important; }
+      #vb-pdf-view { display: block !important; position: fixed; inset: 0; background: #fff; z-index: 9999; padding: 32px 40px; font-family: 'DM Sans', sans-serif; }
+      .pdf-header { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 2px solid #C9A49A; padding-bottom: 14px; margin-bottom: 22px; }
+      .pdf-logo { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 300; color: #2C2420; }
+      .pdf-logo span { color: #C9A49A; }
+      .pdf-title { font-size: 13px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #8A7E78; }
+      .pdf-meta { font-size: 12px; color: #8A7E78; margin-top: 4px; }
+      .pdf-body { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 24px; }
+      .pdf-photo { width: 100%; height: 260px; object-fit: cover; border-radius: 8px; display: block; }
+      .pdf-breakdown h3 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 400; color: #2C2420; margin: 0 0 14px; }
+      .pdf-cat-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #EDE6DF; font-size: 13px; color: #2C2420; }
+      .pdf-cat-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
+      .pdf-cat-name { display: flex; align-items: center; flex: 1; }
+      .pdf-cat-amt { font-weight: 600; color: #2C2420; }
+      .pdf-cat-pct { font-size: 11px; color: #8A7E78; margin-left: 8px; }
+      .pdf-total-row { display: flex; justify-content: space-between; padding: 12px 0 0; font-size: 15px; font-weight: 600; color: #2C2420; border-top: 2px solid #C9A49A; margin-top: 4px; }
+      .pdf-bar-section { margin-top: 4px; }
+      .pdf-bar-label { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: #8A7E78; margin-bottom: 8px; }
+      .pdf-bar-track { display: flex; height: 16px; border-radius: 8px; overflow: hidden; width: 100%; }
+      .pdf-bar-seg { height: 100%; }
+      .pdf-footer { margin-top: 20px; font-size: 11px; color: #B0A49E; text-align: center; letter-spacing: 0.06em; text-transform: uppercase; }
+    }
 
     @media (max-width: 960px) {
       .land-nav { padding: 22px 28px; }
@@ -902,11 +964,12 @@
           <label class="form-label">Expected guest count</label>
           <select class="form-input" id="f-guests">
             <option value="">Select…</option>
-            <option>Under 30 (micro wedding)</option>
+            <option>0 – 30 (micro wedding)</option>
             <option>30 – 75 (intimate)</option>
-            <option>75 – 150 (medium)</option>
-            <option>150 – 250 (large)</option>
-            <option>250+ (grand celebration)</option>
+            <option>75 – 120 (medium)</option>
+            <option>120 – 160 (large)</option>
+            <option>160 – 250 (grand)</option>
+            <option>250+ (celebration)</option>
           </select>
         </div>
         <div class="form-group">
@@ -1029,13 +1092,14 @@
       <div class="vb-header-label" style="margin-top:2px;">Your Vision Board</div>
     </div>
     <div class="vb-header-actions">
+      <button class="vb-export-btn" onclick="exportPDF()">⬇ Save as PDF</button>
       <button class="vb-regen" id="vb-regen-btn" onclick="regenScene()">↻ Regenerate scene <span id="vb-regen-count" style="opacity:0.5">(3 left)</span></button>
-      <button class="vb-continue" onclick="goToDashboard()">Continue to dashboard →</button>
+      <button class="vb-continue" onclick="goToDashboard()">Explore vendors &amp; build my plan →</button>
     </div>
   </div>
 
   <div class="vb-scene-wrap" id="vb-scene-wrap">
-    <img src="wedding photo.jpg" class="vb-photo" alt="Your ceremony scene" id="vb-photo">
+    <img src="wedding_ceremony_pics/summer_outdoor_romantic.png" class="vb-photo" alt="Your ceremony scene" id="vb-photo">
     <div class="vb-photo-overlay"></div>
 
     <!-- Callout 1: Venue & Setup -->
@@ -1050,6 +1114,8 @@
           <div class="vb-c-tier active" onclick="setTier(event,1,'standard')"><strong id="vbt-1-s">—</strong>Standard</div>
           <div class="vb-c-tier" onclick="setTier(event,1,'premium')"><strong id="vbt-1-p">—</strong>Premium</div>
         </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-1" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,1)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1065,6 +1131,8 @@
           <div class="vb-c-tier active" onclick="setTier(event,2,'standard')"><strong id="vbt-2-s">—</strong>Standard</div>
           <div class="vb-c-tier" onclick="setTier(event,2,'premium')"><strong id="vbt-2-p">—</strong>Premium</div>
         </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-2" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,2)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1080,6 +1148,8 @@
           <div class="vb-c-tier active" onclick="setTier(event,3,'standard')"><strong id="vbt-3-s">—</strong>Standard</div>
           <div class="vb-c-tier" onclick="setTier(event,3,'premium')"><strong id="vbt-3-p">—</strong>Premium</div>
         </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-3" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,3)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1095,6 +1165,8 @@
           <div class="vb-c-tier active" onclick="setTier(event,4,'standard')"><strong id="vbt-4-s">—</strong>Standard</div>
           <div class="vb-c-tier" onclick="setTier(event,4,'premium')"><strong id="vbt-4-p">—</strong>Premium</div>
         </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-4" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,4)" onclick="event.stopPropagation()">
       </div>
     </div>
 
@@ -1110,6 +1182,24 @@
           <div class="vb-c-tier active" onclick="setTier(event,5,'standard')"><strong id="vbt-5-s">—</strong>Standard</div>
           <div class="vb-c-tier" onclick="setTier(event,5,'premium')"><strong id="vbt-5-p">—</strong>Premium</div>
         </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-5" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,5)" onclick="event.stopPropagation()">
+      </div>
+    </div>
+    <!-- Callout 6: Catering & Drinks -->
+    <div class="vb-callout vb-c6" id="vbc-6" onclick="toggleCallout(6)">
+      <div class="vb-c-label">Catering &amp; Drinks <span class="vb-c-chevron">▾</span></div>
+      <div class="vb-c-amount" id="vba-6">$7,200</div>
+      <div class="vb-c-pct" id="vbp-6">24% of budget</div>
+      <div class="vb-c-detail" id="vbd-6">
+        <div style="margin-bottom:8px;line-height:1.5;">Full catering service, welcome drinks, dinner, dessert, and bar package for all guests.</div>
+        <div class="vb-c-tiers">
+          <div class="vb-c-tier" onclick="setTier(event,6,'budget')"><strong id="vbt-6-b">—</strong>Budget</div>
+          <div class="vb-c-tier active" onclick="setTier(event,6,'standard')"><strong id="vbt-6-s">—</strong>Standard</div>
+          <div class="vb-c-tier" onclick="setTier(event,6,'premium')"><strong id="vbt-6-p">—</strong>Premium</div>
+        </div>
+        <span class="vb-c-input-label">Custom amount</span>
+        <input type="number" id="vbi-6" class="vb-c-input" placeholder="Enter amount…" oninput="setCustomAmt(event,6)" onclick="event.stopPropagation()">
       </div>
     </div>
   </div>
@@ -1117,22 +1207,50 @@
   <!-- Budget bar -->
   <div class="vb-budget-bar">
     <div class="vb-bar-track">
-      <div class="vb-bar-seg vb-seg-venue"  id="vb-seg-1" style="width:45%"></div>
-      <div class="vb-bar-seg vb-seg-floral" id="vb-seg-2" style="width:12%"></div>
-      <div class="vb-bar-seg vb-seg-photo"  id="vb-seg-3" style="width:14%"></div>
-      <div class="vb-bar-seg vb-seg-music"  id="vb-seg-4" style="width:10%"></div>
-      <div class="vb-bar-seg vb-seg-mc"     id="vb-seg-5" style="width:19%"></div>
+      <div class="vb-bar-seg vb-seg-venue"    id="vb-seg-1" style="width:28%"></div>
+      <div class="vb-bar-seg vb-seg-catering" id="vb-seg-6" style="width:24%"></div>
+      <div class="vb-bar-seg vb-seg-floral"   id="vb-seg-2" style="width:11%"></div>
+      <div class="vb-bar-seg vb-seg-photo"    id="vb-seg-3" style="width:13%"></div>
+      <div class="vb-bar-seg vb-seg-music"    id="vb-seg-4" style="width:10%"></div>
+      <div class="vb-bar-seg vb-seg-mc"       id="vb-seg-5" style="width:14%"></div>
     </div>
     <div class="vb-bar-labels">
-      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:var(--rose)"></span>Venue &amp; Setup <strong id="vbl-1">$13,500</strong></span>
-      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:var(--sage)"></span>Florals &amp; Décor <strong id="vbl-2">$3,600</strong></span>
-      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#B8956A"></span>Photography &amp; Video <strong id="vbl-3">$4,200</strong></span>
+      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:var(--rose)"></span>Venue &amp; Setup <strong id="vbl-1">$8,400</strong></span>
+      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#7FB5A0"></span>Catering &amp; Drinks <strong id="vbl-6">$7,200</strong></span>
+      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:var(--sage)"></span>Florals &amp; Décor <strong id="vbl-2">$3,300</strong></span>
+      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#B8956A"></span>Photography &amp; Video <strong id="vbl-3">$3,900</strong></span>
       <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#8A9EB8"></span>Music &amp; DJ <strong id="vbl-4">$3,000</strong></span>
-      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#9E8AAA"></span>MC &amp; Host <strong id="vbl-5">$5,700</strong></span>
+      <span class="vb-bar-label"><span class="vb-bar-dot" style="background:#9E8AAA"></span>MC &amp; Host <strong id="vbl-5">$4,200</strong></span>
       <span class="vb-bar-label" style="margin-left:auto;color:rgba(245,237,216,0.75)">Total: <strong id="vb-total" style="color:rgba(245,237,216,0.95)">$30,000</strong></span>
     </div>
   </div>
 
+</div>
+
+<!-- PDF print view (hidden; shown only during window.print()) -->
+<div id="vb-pdf-view">
+  <div class="pdf-header">
+    <div>
+      <div class="pdf-logo">Rendez<span>vous</span></div>
+      <div class="pdf-meta" id="pdf-meta"></div>
+    </div>
+    <div class="pdf-title">Your Wedding Vision Board</div>
+  </div>
+  <div class="pdf-body">
+    <div>
+      <img class="pdf-photo" id="pdf-photo" src="" alt="Your ceremony">
+    </div>
+    <div class="pdf-breakdown">
+      <h3>Budget Breakdown</h3>
+      <div id="pdf-categories"></div>
+      <div class="pdf-total-row"><span>Total budget</span><strong id="pdf-total-val">—</strong></div>
+    </div>
+  </div>
+  <div class="pdf-bar-section">
+    <div class="pdf-bar-label">Allocation</div>
+    <div class="pdf-bar-track" id="pdf-bar-track"></div>
+  </div>
+  <div class="pdf-footer">Generated by Rendezvous · rendezvous.ca</div>
 </div>
 
 <!-- ══════════════════════════════════════════════════ -->
@@ -1198,6 +1316,9 @@
       <button class="cat-btn" onclick="filterCat('venue',this)">Venues</button>
       <button class="cat-btn" onclick="filterCat('caterer',this)">Caterers</button>
       <button class="cat-btn" onclick="filterCat('photographer',this)">Photographers</button>
+      <button class="cat-btn" onclick="filterCat('florist',this)">Florists</button>
+      <button class="cat-btn" onclick="filterCat('music',this)">Music</button>
+      <button class="cat-btn" onclick="filterCat('mc',this)">MC &amp; Host</button>
       <button class="cat-btn" onclick="filterCat('planner',this)">Planners</button>
     </div>
 
@@ -1286,32 +1407,54 @@ function parseBudgetMid(b) {
 
 function allocateBudget(prof) {
   const total = parseBudgetMid(prof.budget);
-  // Base Vancouver market percentages
-  const base = { venue: 0.45, floral: 0.12, photo: 0.14, music: 0.10, mc: 0.19 };
+  // Base Vancouver market percentages (6 categories)
+  const base = { venue: 0.28, catering: 0.24, floral: 0.11, photo: 0.13, music: 0.10, mc: 0.14 };
   const p = prof.priority || '';
-  // Priority adjustments — shift 7% toward priority, spread reduction across others
-  if(p === 'Venue')               { base.venue += 0.08; base.floral -= 0.02; base.photo -= 0.02; base.music -= 0.02; base.mc -= 0.02; }
-  else if(p === 'Photographer')   { base.photo += 0.07; base.venue -= 0.03; base.floral -= 0.02; base.music -= 0.01; base.mc -= 0.01; }
-  else if(p === 'Flowers & Décor'){ base.floral += 0.07; base.venue -= 0.03; base.photo -= 0.02; base.music -= 0.01; base.mc -= 0.01; }
-  else if(p === 'Music / Entertainment'){ base.music += 0.06; base.venue -= 0.02; base.photo -= 0.02; base.floral -= 0.01; base.mc -= 0.01; }
-  else if(p === 'MC & Host')      { base.mc += 0.06; base.venue -= 0.02; base.photo -= 0.02; base.floral -= 0.01; base.music -= 0.01; }
+  // Priority adjustments — shift budget toward selected priority
+  if(p === 'Venue')                { base.venue += 0.07; base.catering -= 0.03; base.floral -= 0.02; base.photo -= 0.01; base.mc -= 0.01; }
+  else if(p === 'Photographer')    { base.photo += 0.07; base.venue -= 0.03; base.catering -= 0.02; base.floral -= 0.01; base.mc -= 0.01; }
+  else if(p === 'Flowers & Décor') { base.floral += 0.07; base.venue -= 0.02; base.catering -= 0.02; base.photo -= 0.02; base.mc -= 0.01; }
+  else if(p === 'Music / Entertainment') { base.music += 0.06; base.venue -= 0.02; base.catering -= 0.02; base.floral -= 0.01; base.mc -= 0.01; }
+  else if(p === 'MC & Host')       { base.mc += 0.06; base.venue -= 0.02; base.catering -= 0.02; base.floral -= 0.01; base.music -= 0.01; }
+  else if(p === 'Catering & Drinks') { base.catering += 0.08; base.venue -= 0.03; base.floral -= 0.02; base.photo -= 0.02; base.mc -= 0.01; }
   // Clamp negatives
   Object.keys(base).forEach(k => { if(base[k] < 0.05) base[k] = 0.05; });
   // Normalise to exactly 1.0
   const sum = Object.values(base).reduce((a,b)=>a+b,0);
   Object.keys(base).forEach(k => base[k] = base[k]/sum);
   return {
-    venue: Math.round(total * base.venue / 100) * 100,
-    floral: Math.round(total * base.floral / 100) * 100,
-    photo: Math.round(total * base.photo / 100) * 100,
-    music: Math.round(total * base.music / 100) * 100,
-    mc: Math.round(total * base.mc / 100) * 100,
+    venue:    Math.round(total * base.venue    / 100) * 100,
+    catering: Math.round(total * base.catering / 100) * 100,
+    floral:   Math.round(total * base.floral   / 100) * 100,
+    photo:    Math.round(total * base.photo    / 100) * 100,
+    music:    Math.round(total * base.music    / 100) * 100,
+    mc:       Math.round(total * base.mc       / 100) * 100,
     total,
     pcts: base
   };
 }
 
 function fmtMoney(n) { return '$' + n.toLocaleString(); }
+
+/* ── DALL-E image generation ──────────────────────────── */
+async function fetchSceneImage(prof) {
+  try {
+    const res = await fetch('/api/generate-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        style: prof.style, setting: prof.setting, date: prof.date,
+        colors: prof.colors, cultural: prof.cultural
+      })
+    });
+    if (!res.ok) throw new Error('API ' + res.status);
+    const data = await res.json();
+    return data.url || null;
+  } catch (err) {
+    console.warn('DALL-E generation failed, using local photo:', err.message);
+    return null; // caller falls back to pickScenePhoto()
+  }
+}
 
 /* ── Generating ───────────────────────────────────────── */
 function startGen() {
@@ -1332,6 +1475,7 @@ function startGen() {
   document.getElementById('gen-pbar').style.width = '0%';
   show('generating');
 
+  // Run progress animation steps
   const progSteps = [20, 45, 72, 95];
   ['g1','g2','g3','g4'].forEach((id, i) => {
     setTimeout(() => {
@@ -1340,11 +1484,15 @@ function startGen() {
     }, 700 + i * 750);
   });
 
-  setTimeout(() => {
-    renderVisionBoard();
+  // Start API call and minimum animation wait in parallel
+  const minWait   = new Promise(r => setTimeout(r, 4000));
+  const imageCall = fetchSceneImage(profile);
+
+  Promise.all([minWait, imageCall]).then(([, imageUrl]) => {
+    renderVisionBoard(imageUrl);  // passes API url (or null → fallback)
     openVisionBoard();
     prepareDashboard();
-  }, 3600);
+  });
 }
 
 /* ── Vendor data ──────────────────────────────────────── */
@@ -1393,39 +1541,215 @@ const vendors = [
   { id:42, cat:'photographer', name:'Studio Atelier',            loc:'Vancouver',                  price:'$4,200 – $7,500',  pLabel:'full day coverage', cap:'Any size',         tags:['Editorial','Film-style','Award-winning'],  match:96, emoji:'📷' },
   { id:43, cat:'photographer', name:'Golden Hour Co.',           loc:'Vancouver & Lower Mainland', price:'$3,000 – $5,500',  pLabel:'full day coverage', cap:'Any size',         tags:['Candid','Natural light','Warm tones'],     match:93, emoji:'✨' },
   { id:44, cat:'photographer', name:'Luminara Photo',            loc:'Vancouver',                  price:'$2,800 – $4,800',  pLabel:'full day coverage', cap:'Any size',         tags:['Modern','Multicultural','Clean'],          match:87, emoji:'🌅' },
-  { id:45, cat:'planner',      name:'Gather Events',             loc:'Vancouver',                  price:'$3,500 – $6,000',  pLabel:'full planning',     cap:'Up to 200 guests', tags:['Full service','Day-of','Luxury'],          match:94, emoji:'📋' },
-  { id:46, cat:'planner',      name:'The Wedding Atelier',       loc:'Vancouver & Victoria',       price:'$2,500 – $5,000',  pLabel:'full planning',     cap:'Any size',         tags:['Boutique','Multicultural','Intimate'],     match:89, emoji:'💐' },
-  { id:47, cat:'planner',      name:'Bloom & Co.',               loc:'Vancouver',                  price:'$1,800 – $3,500',  pLabel:'coordination',      cap:'Up to 150 guests', tags:['Day-of','Budget-friendly','Floral incl.'], match:82, emoji:'🌸' },
+  { id:45, cat:'planner',      name:'Gather Events',             loc:'Vancouver',                  price:'$3,500 – $6,000',  pLabel:'full planning',     cap:'Up to 200 guests', tags:['Full service','Day-of','Luxury'],               emoji:'📋' },
+  { id:46, cat:'planner',      name:'The Wedding Atelier',       loc:'Vancouver & Victoria',       price:'$2,500 – $5,000',  pLabel:'full planning',     cap:'Any size',         tags:['Boutique','Multicultural','Intimate'],          emoji:'💐' },
+  { id:47, cat:'planner',      name:'Bloom & Co.',               loc:'Vancouver',                  price:'$1,800 – $3,500',  pLabel:'coordination',      cap:'Up to 150 guests', tags:['Day-of','Budget-friendly','Floral incl.'],      emoji:'🌸' },
+  // Florists
+  { id:48, cat:'florist', name:'Garden & Grace Florals',    loc:'Kitsilano, Vancouver',           price:'$2,500 – $6,000',  pLabel:'full floral design', cap:'Any size', tags:['Romantic','Lush blooms','Garden','Elegant'],         emoji:'🌸' },
+  { id:49, cat:'florist', name:'The Wild Botanist',         loc:'Mount Pleasant, Vancouver',      price:'$1,800 – $4,500',  pLabel:'full floral design', cap:'Any size', tags:['Boho','Organic','Wildflower','Natural'],             emoji:'🌿' },
+  { id:50, cat:'florist', name:'Oui Floral',                loc:'Gastown, Vancouver',             price:'$2,200 – $5,500',  pLabel:'full floral design', cap:'Any size', tags:['Elegant','European','Architectural','Luxury'],       emoji:'💐' },
+  { id:51, cat:'florist', name:'Pacific Blooms Co.',        loc:'Burnaby & Vancouver',            price:'$1,500 – $3,500',  pLabel:'full floral design', cap:'Any size', tags:['Modern','Clean','Minimalist','Seasonal'],            emoji:'🌼' },
+  { id:52, cat:'florist', name:'Foliage & Bloom',           loc:'North Shore, Vancouver',         price:'$2,000 – $5,000',  pLabel:'full floral design', cap:'Any size', tags:['Rustic','Natural','Earthy','Forest'],                emoji:'🍃' },
+  // Music & Entertainment
+  { id:53, cat:'music', name:'Encore Entertainment',        loc:'Vancouver',                      price:'$1,800 – $3,500',  pLabel:'full day DJ',        cap:'Any size', tags:['DJ','Modern','Top 40','Dance'],                     emoji:'🎧' },
+  { id:54, cat:'music', name:'The String Collective',       loc:'Vancouver',                      price:'$1,200 – $2,800',  pLabel:'ceremony & cocktails',cap:'Any size', tags:['Live music','Classical','Romantic','Elegant'],       emoji:'🎻' },
+  { id:55, cat:'music', name:'Anthem DJ Group',             loc:'Vancouver & Lower Mainland',     price:'$1,500 – $2,800',  pLabel:'full day DJ',        cap:'Any size', tags:['DJ','Multicultural','High energy','Dance'],          emoji:'🎵' },
+  { id:56, cat:'music', name:'Pacific Coast Band',          loc:'Vancouver',                      price:'$3,500 – $6,000',  pLabel:'live band',          cap:'Any size', tags:['Live band','Versatile','High energy','Rustic'],      emoji:'🎸' },
+  { id:57, cat:'music', name:'Ambient Sound Co.',           loc:'Vancouver',                      price:'$900 – $1,800',    pLabel:'ceremony sound',     cap:'Any size', tags:['Acoustic','Intimate','Romantic','Boho'],             emoji:'🎼' },
+  // MC & Host
+  { id:58, cat:'mc', name:'Mark Chen Emcee',               loc:'Vancouver',                      price:'$1,500 – $2,500',  pLabel:'full day MC',        cap:'Any size', tags:['Bilingual','Multicultural','Engaging','Warm'],       emoji:'🎤' },
+  { id:59, cat:'mc', name:'Ceremony Co. Officiants',        loc:'Vancouver & Lower Mainland',     price:'$600 – $1,200',    pLabel:'ceremony officiant', cap:'Any size', tags:['Custom vows','LGBTQ+ friendly','Intimate','Inclusive'],emoji:'💍' },
+  { id:60, cat:'mc', name:'The Host Agency',                loc:'Vancouver',                      price:'$1,800 – $3,200',  pLabel:'MC & day coordinator',cap:'Any size', tags:['Professional','Day-of','Luxury','Full service'],     emoji:'🌟' },
+  { id:61, cat:'mc', name:'Simply Spoken MC',               loc:'Burnaby & Vancouver',            price:'$1,200 – $2,200',  pLabel:'full day MC',        cap:'Any size', tags:['Warm','Storytelling','Personalised','Rustic'],       emoji:'🎙️' },
+  { id:62, cat:'mc', name:'Unity Officiant Services',       loc:'Vancouver',                      price:'$400 – $800',      pLabel:'ceremony officiant', cap:'Any size', tags:['Intimate','Spiritual','Garden','Boho'],              emoji:'🕊️' },
 ];
 
 let currentCat = 'all';
 const shortlist = new Set();
 
-function renderVendors(cat) {
-  currentCat = cat;
-  const list = cat === 'all' ? vendors : vendors.filter(v => v.cat === cat);
-  document.getElementById('v-count').textContent = list.length + ' vendors found';
-  document.getElementById('vendor-grid').innerHTML = list.map((v, i) => `
-    <div class="vcard" style="animation-delay:${i*0.06}s;">
+/* ── Vendor personalization ────────────────────────────── */
+const CAT_LABELS = {
+  venue: 'Venues', caterer: 'Caterers', photographer: 'Photographers',
+  florist: 'Florists', music: 'Music & Entertainment', mc: 'MC & Host', planner: 'Planners'
+};
+const STYLE_KEYWORDS = {
+  'Elegant & Formal':    ['Elegant','Luxury','Grand','Historic','Art Deco','European','Architectural','Classical'],
+  'Rustic & Natural':    ['Rustic','Natural','Forest','Farm','Barn','Ranch','Riverside','Earthy','Organic','Wildflower'],
+  'Boho & Whimsical':    ['Boho','Garden','Wildflower','Organic','Outdoor','Acoustic','Intimate'],
+  'Modern & Minimalist': ['Modern','Minimalist','Architectural','Clean','Industrial','Seasonal'],
+  'Romantic & Floral':   ['Romantic','Garden','Waterfront','Intimate','Lush blooms','Classical','Elegant'],
+  'Fun & Laid-back':     ['Rustic','Boutique','Versatile','High energy','Dance','Top 40']
+};
+const OUTDOOR_TAGS = ['Outdoor','Garden','Rooftop','Mountain','Waterfront','Waterfall','Riverside','Forest','Ranch','Alpine'];
+const INDOOR_TAGS  = ['Grand Ballroom','Ballroom','Historic','Industrial','Art Deco','Architectural'];
+
+function parseGuestCount(g) {
+  if (!g) return 100;
+  if (g.startsWith('0'))       return 15;
+  if (g.startsWith('30'))      return 52;
+  if (g.startsWith('75'))      return 97;
+  if (g.startsWith('120'))     return 140;
+  if (g.startsWith('160'))     return 205;
+  if (g.startsWith('250'))     return 300;
+  return 100;
+}
+
+function parsePrice(priceStr) {
+  const nums = priceStr.replace(/\$|,|\+/g, '').match(/\d+/g);
+  if (!nums) return { min: 0, max: Infinity };
+  return nums.length >= 2
+    ? { min: +nums[0], max: +nums[1] }
+    : { min: +nums[0], max: +nums[0] * 1.8 };
+}
+
+function scoreVendor(v) {
+  let score = 55;
+  const reasons = [];
+  const alloc = vbAlloc || allocateBudget(profile);
+
+  // 1. Budget fit — use live currentAmounts (user-adjusted) if available, else vbAlloc
+  const liveTotal = currentAmounts.slice(1).reduce((a, b) => a + b, 0);
+  const useLive = liveTotal > 0;
+  const catBudgetMap = {
+    venue:        useLive ? currentAmounts[1] : alloc.venue,
+    florist:      useLive ? currentAmounts[2] : alloc.floral,
+    photographer: useLive ? currentAmounts[3] : alloc.photo,
+    music:        useLive ? currentAmounts[4] : alloc.music,
+    mc:           useLive ? currentAmounts[5] : alloc.mc,
+    caterer:      useLive ? currentAmounts[6] : alloc.catering,
+    planner:      Math.round((useLive ? liveTotal : alloc.total) * 0.06)
+  };
+  const catBudget = catBudgetMap[v.cat];
+  if (catBudget) {
+    const { min, max } = parsePrice(v.price);
+    let compare = catBudget;
+    if (v.cat === 'caterer') compare = catBudget / Math.max(1, parseGuestCount(profile.guests));
+    if (max <= compare * 1.15) {
+      score += 18; reasons.push('Fits your ' + fmtMoney(catBudget) + ' budget');
+    } else if (min <= compare * 1.25) {
+      score += 7; reasons.push('Within your budget range');
+    }
+  }
+
+  // 2. Guest capacity (venue & caterer only)
+  if (v.cat === 'venue' || v.cat === 'caterer') {
+    const guests = parseGuestCount(profile.guests);
+    const capMatch = v.cap.match(/\d+/g);
+    let capMax = 9999;
+    if (capMatch && !v.cap.toLowerCase().includes('any')) {
+      capMax = Math.max(...capMatch.map(Number));
+    }
+    if (capMax >= guests) {
+      score += 14; reasons.push('Fits your ' + guests + '-guest count');
+    } else {
+      score -= 18; // too small
+    }
+  }
+
+  // 3. Style match
+  const styleKW = STYLE_KEYWORDS[profile.style] || [];
+  const styleHits = v.tags.filter(t => styleKW.some(k => t.toLowerCase().includes(k.toLowerCase())));
+  if (styleHits.length >= 2) { score += 14; reasons.push(styleHits[0] + ' matches your vibe'); }
+  else if (styleHits.length === 1) { score += 7; reasons.push(styleHits[0] + ' aesthetic'); }
+
+  // 4. Setting match (venues)
+  if (v.cat === 'venue' && profile.setting) {
+    if (profile.setting === 'Outdoor' && v.tags.some(t => OUTDOOR_TAGS.includes(t))) {
+      score += 9; reasons.push('Outdoor setting');
+    } else if (profile.setting === 'Indoor' && v.tags.some(t => INDOOR_TAGS.includes(t))) {
+      score += 9; reasons.push('Indoor venue');
+    } else if (profile.setting === 'Mix of both') {
+      score += 4;
+    }
+  }
+
+  // 5. Priority category boost
+  const catPriMap = { venue:'Venue', caterer:'Catering & Drinks', photographer:'Photographer', florist:'Flowers & Décor', music:'Music / Entertainment', mc:'MC & Host' };
+  if (profile.priority && profile.priority === catPriMap[v.cat]) {
+    score += 8; reasons.push('Your top priority');
+  }
+
+  // 6. Cultural / dietary signals
+  const culturalTags = ['Cultural','Multicultural','Bilingual','LGBTQ+ friendly','Indigenous','Inclusive'];
+  if (profile.cultural && v.tags.some(t => culturalTags.some(c => t.includes(c)))) {
+    score += 8; reasons.push('Culturally inclusive');
+  }
+  if (profile.dietary && v.cat === 'caterer') {
+    const dietTags = ['Halal','Kosher','Dietary','Vegan'];
+    if (v.tags.some(t => dietTags.some(d => t.includes(d)))) {
+      score += 9; reasons.push('Accommodates dietary needs');
+    }
+  }
+
+  score = Math.min(99, Math.max(52, Math.round(score)));
+  if (reasons.length === 0) reasons.push('Good fit for your wedding');
+  return { score, reasons: reasons.slice(0, 3) };
+}
+
+function buildCard(v, delay) {
+  const { score, reasons } = scoreVendor(v);
+  const catLabel = CAT_LABELS[v.cat] || v.cat;
+  const badgeColor = score >= 88 ? 'tag-sage' : 'tag-rose';
+  return `
+    <div class="vcard" style="animation-delay:${delay}s;">
       <div class="vcard-img">
         <span>${v.emoji}</span>
-        <div class="vcard-badge"><span class="tag tag-sage">${v.match}% match</span></div>
+        <div class="vcard-badge"><span class="tag ${badgeColor}">${score}% match</span></div>
         <button class="vcard-save${shortlist.has(v.id)?' saved':''}" onclick="toggleSave(${v.id},event)">
           ${shortlist.has(v.id)?'♥':'♡'}
         </button>
       </div>
       <div class="vcard-body">
-        <div class="vcard-cat">${v.cat}</div>
+        <div class="vcard-cat">${catLabel}</div>
         <div class="vcard-name">${v.name}</div>
         <div class="vcard-loc">📍 ${v.loc}</div>
+        <div class="vcard-reasons">${reasons.map(r=>`<span class="vcard-reason">${r}</span>`).join('')}</div>
         <div class="vcard-tags">${v.tags.map(t=>`<span class="tag tag-rose">${t}</span>`).join('')}</div>
         <div class="vcard-foot">
           <div><div class="vcard-price">${v.price}</div><div class="vcard-price-lbl">${v.pLabel}</div></div>
           <div class="vcard-cap">👥 ${v.cap}</div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+}
+
+function topN(list, n) {
+  return list
+    .map(v => ({ v, s: scoreVendor(v).score }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, n)
+    .map(x => x.v);
+}
+
+function renderVendors(cat) {
+  currentCat = cat;
+  const grid = document.getElementById('vendor-grid');
+  const countEl = document.getElementById('v-count');
+
+  if (cat === 'all') {
+    const catOrder = ['venue','caterer','photographer','florist','music','mc','planner'];
+    let html = '';
+    let total = 0;
+    catOrder.forEach(c => {
+      const list = topN(vendors.filter(v => v.cat === c), 3);
+      total += list.length;
+      html += `<div class="vendor-group">
+        <div class="vendor-group-header">
+          <span class="vendor-group-title">${CAT_LABELS[c]}</span>
+          <span class="vendor-group-count">${list.length} recommendations</span>
+        </div>
+        <div class="vendor-grid" style="padding:0;margin:0;">
+          ${list.map((v, i) => buildCard(v, i * 0.07)).join('')}
+        </div>
+      </div>`;
+    });
+    countEl.textContent = total + ' curated picks across all categories';
+    grid.innerHTML = html;
+  } else {
+    const list = topN(vendors.filter(v => v.cat === cat), 5);
+    countEl.textContent = list.length + ' recommendations for you';
+    grid.innerHTML = list.map((v, i) => buildCard(v, i * 0.08)).join('');
+  }
 }
 
 function toggleSave(id, e) {
@@ -1441,7 +1765,7 @@ function updateShortlist() {
   document.getElementById('sl-empty').style.display = shortlist.size ? 'none' : 'block';
   document.getElementById('sl-items').innerHTML = items.map(v => `
     <div class="sl-item">
-      <div><div class="sl-name">${v.name}</div><div class="sl-cat">${v.cat}</div></div>
+      <div><div class="sl-name">${v.name}</div><div class="sl-cat">${CAT_LABELS[v.cat]||v.cat}</div></div>
       <button class="sl-remove" onclick="removeSave(${v.id})">×</button>
     </div>
   `).join('');
@@ -1462,29 +1786,122 @@ function filterCat(cat, btn) {
 /* ── Vision Board ─────────────────────────────────────── */
 let vbRegenLeft = 3;
 let vbAlloc = null;
+let currentAmounts = [0, 0, 0, 0, 0, 0, 0]; // 1-indexed: [unused,venue,floral,photo,music,mc,catering]
+let vbScenePhoto = 'wedding_ceremony_pics/summer_outdoor_romantic.png';
 
-function renderVisionBoard() {
+/* Map questionnaire answers → ceremony photo filename */
+function pickScenePhoto(prof, useAlt) {
+  const styleMap = {
+    'Elegant & Formal':    'elegant',
+    'Rustic & Natural':    'rustic',
+    'Boho & Whimsical':    'boho',
+    'Modern & Minimalist': 'modern',
+    'Romantic & Floral':   'romantic',
+    'Fun & Laid-back':     'rustic'
+  };
+  const style = styleMap[prof.style] || 'romantic';
+
+  // Indoor only when explicitly selected; everything else → outdoor
+  const setting = (prof.setting === 'Indoor') ? 'indoor' : 'outdoor';
+
+  // Season from wedding date
+  let season = 'summer';
+  if (prof.date) {
+    const m = new Date(prof.date + 'T00:00:00').getMonth() + 1;
+    if (m >= 3 && m <= 5)  season = 'spring';
+    else if (m >= 6 && m <= 8)  season = 'summer';
+    else if (m >= 9 && m <= 11) season = 'fall';
+    else                        season = 'winter';
+  }
+
+  // Resolve setting — no winter outdoor photos exist
+  let resolvedSetting = setting;
+  if (season === 'winter' && setting === 'outdoor') resolvedSetting = 'indoor';
+
+  // Resolve style — no winter_indoor_elegant, only winter_indoor_modern_elegant
+  let resolvedStyle = style;
+  if (season === 'winter' && resolvedSetting === 'indoor' && style === 'elegant') resolvedStyle = 'modern_elegant';
+
+  const base = `wedding_ceremony_pics/${season}_${resolvedSetting}_${resolvedStyle}`;
+
+  // Known _2 variants (for regenerate alternate)
+  const known2 = new Set([
+    'wedding_ceremony_pics/spring_indoor_elegant_2.png',
+    'wedding_ceremony_pics/spring_outdoor_elegant_2.png',
+    'wedding_ceremony_pics/spring_outdoor_modern_2.png',
+    'wedding_ceremony_pics/spring_outdoor_rustic_2.png',
+    'wedding_ceremony_pics/winter_indoor_modern_elegant_2.png'
+  ]);
+
+  if (useAlt) {
+    const alt2 = base + '_2.png';
+    if (known2.has(alt2)) return alt2;
+    // Fall back to adjacent season with same setting/style
+    const seasons = ['spring', 'summer', 'fall', 'winter'];
+    const idx = seasons.indexOf(season);
+    const altSeason = seasons[(idx + 1) % 4];
+    let altSetting = resolvedSetting;
+    if (altSeason === 'winter' && altSetting === 'outdoor') altSetting = 'indoor';
+    let altStyle = style;
+    if (altSeason === 'winter' && altSetting === 'indoor' && style === 'elegant') altStyle = 'modern_elegant';
+    return `wedding_ceremony_pics/${altSeason}_${altSetting}_${altStyle}.png`;
+  }
+
+  return base + '.png';
+}
+
+function renderVisionBoard(imageUrl) {
   vbAlloc = allocateBudget(profile);
   const a = vbAlloc;
+  // Initialise live amounts from fresh allocation
+  // Indices: 1=venue, 2=floral, 3=photo, 4=music, 5=mc, 6=catering
+  currentAmounts = [0, a.venue, a.floral, a.photo, a.music, a.mc, a.catering];
+
+  // Use DALL-E URL if provided, otherwise fall back to local photo
+  vbScenePhoto = imageUrl || pickScenePhoto(profile, false);
+  document.getElementById('vb-photo').src = vbScenePhoto;
+
   const cats = [
-    { i:1, key:'venue',  pct: a.pcts.venue,  amt: a.venue  },
-    { i:2, key:'floral', pct: a.pcts.floral, amt: a.floral },
-    { i:3, key:'photo',  pct: a.pcts.photo,  amt: a.photo  },
-    { i:4, key:'music',  pct: a.pcts.music,  amt: a.music  },
-    { i:5, key:'mc',     pct: a.pcts.mc,     amt: a.mc     }
+    { i:1, pct: a.pcts.venue,    amt: a.venue    },
+    { i:2, pct: a.pcts.floral,   amt: a.floral   },
+    { i:3, pct: a.pcts.photo,    amt: a.photo    },
+    { i:4, pct: a.pcts.music,    amt: a.music    },
+    { i:5, pct: a.pcts.mc,       amt: a.mc       },
+    { i:6, pct: a.pcts.catering, amt: a.catering }
   ];
   cats.forEach(({i, pct, amt}) => {
     document.getElementById('vba-'+i).textContent = fmtMoney(amt);
     document.getElementById('vbp-'+i).textContent = Math.round(pct*100) + '% of budget';
-    document.getElementById('vb-seg-'+i).style.width = Math.round(pct*100) + '%';
-    document.getElementById('vbl-'+i).textContent = fmtMoney(amt);
-    // Tier amounts: 70% / 100% / 140%
     document.getElementById('vbt-'+i+'-b').textContent = fmtMoney(Math.round(amt*0.7/100)*100);
     document.getElementById('vbt-'+i+'-s').textContent = fmtMoney(amt);
     document.getElementById('vbt-'+i+'-p').textContent = fmtMoney(Math.round(amt*1.4/100)*100);
+    // Reset custom input
+    const inp = document.getElementById('vbi-'+i);
+    if (inp) inp.value = '';
+    // Reset tier buttons to standard active
+    const callout = document.getElementById('vbc-'+i);
+    callout.querySelectorAll('.vb-c-tier').forEach((t,ti) => t.classList.toggle('active', ti===1));
   });
-  document.getElementById('vb-total').textContent = fmtMoney(a.total);
+
+  refreshBudgetBar();
   document.getElementById('vb-regen-count').textContent = '(' + vbRegenLeft + ' left)';
+}
+
+function refreshBudgetBar() {
+  const total = currentAmounts.slice(1).reduce((a, b) => a + b, 0);
+  // Segments: 1=venue,2=floral,3=photo,4=music,5=mc,6=catering
+  [1,2,3,4,5,6].forEach(i => {
+    const pct = total > 0 ? currentAmounts[i] / total : 0;
+    const pctRounded = Math.round(pct * 100);
+    const seg = document.getElementById('vb-seg-'+i);
+    if (seg) seg.style.width = pctRounded + '%';
+    const lbl = document.getElementById('vbl-'+i);
+    if (lbl) lbl.textContent = fmtMoney(currentAmounts[i]);
+    // Update the "xx% of budget" text inside each callout box
+    const pctEl = document.getElementById('vbp-'+i);
+    if (pctEl) pctEl.textContent = pctRounded + '% of budget';
+  });
+  document.getElementById('vb-total').textContent = fmtMoney(total);
 }
 
 function openVisionBoard() {
@@ -1498,15 +1915,15 @@ function closeVisionBoard() {
 function goToDashboard() {
   closeVisionBoard();
   show('dashboard');
-  renderVendors('all');
+  prepareDashboard();   // refresh sidebar budget + summary card with live amounts
+  renderVendors('all'); // re-score vendors against updated currentAmounts
   document.querySelectorAll('.cat-btn').forEach((b,i) => b.classList.toggle('active', i===0));
 }
 
 function toggleCallout(n) {
   const el = document.getElementById('vbc-'+n);
   const wasExpanded = el.classList.contains('expanded');
-  // Close all
-  [1,2,3,4,5].forEach(i => document.getElementById('vbc-'+i).classList.remove('expanded'));
+  [1,2,3,4,5,6].forEach(i => document.getElementById('vbc-'+i).classList.remove('expanded'));
   if(!wasExpanded) el.classList.add('expanded');
 }
 
@@ -1516,10 +1933,25 @@ function setTier(e, n, tier) {
   callout.querySelectorAll('.vb-c-tier').forEach(t => t.classList.remove('active'));
   e.target.closest('.vb-c-tier').classList.add('active');
   if(!vbAlloc) return;
-  const base = [0,vbAlloc.venue,vbAlloc.floral,vbAlloc.photo,vbAlloc.music,vbAlloc.mc][n];
-  const mult = tier==='budget'?0.7:tier==='premium'?1.4:1.0;
+  const base = [0, vbAlloc.venue, vbAlloc.floral, vbAlloc.photo, vbAlloc.music, vbAlloc.mc, vbAlloc.catering][n];
+  const mult = tier==='budget' ? 0.7 : tier==='premium' ? 1.4 : 1.0;
   const newAmt = Math.round(base*mult/100)*100;
+  currentAmounts[n] = newAmt;
   document.getElementById('vba-'+n).textContent = fmtMoney(newAmt);
+  // Sync custom input field to reflect tier selection
+  const inp = document.getElementById('vbi-'+n);
+  if (inp) inp.value = newAmt;
+  refreshBudgetBar();
+}
+
+function setCustomAmt(e, n) {
+  const val = parseInt(e.target.value, 10);
+  if (isNaN(val) || val < 0) return;
+  currentAmounts[n] = val;
+  document.getElementById('vba-'+n).textContent = fmtMoney(val);
+  // Clear tier active state — this is now a custom amount
+  document.getElementById('vbc-'+n).querySelectorAll('.vb-c-tier').forEach(t => t.classList.remove('active'));
+  refreshBudgetBar();
 }
 
 function regenScene() {
@@ -1528,38 +1960,112 @@ function regenScene() {
   const btn = document.getElementById('vb-regen-btn');
   btn.disabled = true;
   btn.textContent = '↻ Generating…';
-  // Simulate regeneration delay
   const photo = document.getElementById('vb-photo');
   photo.style.transition = 'opacity 0.4s';
   photo.style.opacity = '0.2';
-  setTimeout(() => {
+  // Snapshot current amounts (preserve user edits across regen)
+  const savedAmounts = currentAmounts.slice();
+
+  // Call DALL-E for a fresh image; fall back to local alternate on failure
+  fetchSceneImage(profile).then(imageUrl => {
+    const newSrc = imageUrl || pickScenePhoto(profile, true);
+    photo.src = newSrc;
+    vbScenePhoto = newSrc;
+    const thumb = document.querySelector('.vb-summary-thumb');
+    if (thumb) thumb.style.background = `url('${newSrc}') center/cover`;
     photo.style.opacity = '1';
     btn.disabled = vbRegenLeft <= 0;
     btn.innerHTML = '↻ Regenerate scene <span id="vb-regen-count" style="opacity:0.5">(' + vbRegenLeft + ' left)</span>';
-    if(vbRegenLeft <= 0) btn.title = 'Maximum regenerations reached for this session';
-  }, 2000);
+    if (vbRegenLeft <= 0) btn.title = 'Maximum regenerations reached for this session';
+    // Restore user-adjusted amounts
+    currentAmounts = savedAmounts;
+    [1,2,3,4,5,6].forEach(i => {
+      document.getElementById('vba-'+i).textContent = fmtMoney(currentAmounts[i]);
+      const inp = document.getElementById('vbi-'+i);
+      if (inp && inp.value) inp.value = currentAmounts[i];
+    });
+    refreshBudgetBar();
+  });
 }
 
 function prepareDashboard() {
   document.getElementById('p-city').textContent = profile.city;
   if(profile.guests) document.getElementById('p-guests').textContent = profile.guests;
-  if(profile.budget) document.getElementById('p-budget').textContent = profile.budget;
+  // Show the precise live total from Vision Board (user-adjusted), not the original range
+  const liveSpend = currentAmounts.slice(1).reduce((a, b) => a + b, 0);
+  document.getElementById('p-budget').textContent = liveSpend > 0
+    ? fmtMoney(liveSpend) + ' total'
+    : (profile.budget || '—');
   if(profile.date) {
     const d = new Date(profile.date + 'T00:00:00');
     document.getElementById('p-date').textContent = d.toLocaleDateString('en-CA', { month:'long', year:'numeric' });
   }
+  // Update Vision Board summary thumbnail with scene photo
+  const thumb = document.querySelector('.vb-summary-thumb');
+  if (thumb && vbScenePhoto) thumb.style.background = `url('${vbScenePhoto}') center/cover`;
+
   // Vision Board summary card chips
   if(vbAlloc) {
     const a = vbAlloc;
     document.getElementById('vbs-sub').textContent = fmtMoney(a.total) + ' · ' + (profile.city || 'Vancouver') + ' · ' + (profile.style || 'Your style');
     document.getElementById('vbs-chips').innerHTML = `
       <span class="vb-chip vb-chip-venue">Venue ${fmtMoney(a.venue)}</span>
+      <span class="vb-chip" style="background:rgba(127,181,160,0.15);color:#4A8C78;">Catering ${fmtMoney(a.catering)}</span>
       <span class="vb-chip vb-chip-floral">Florals ${fmtMoney(a.floral)}</span>
       <span class="vb-chip vb-chip-photo">Photography ${fmtMoney(a.photo)}</span>
       <span class="vb-chip vb-chip-music">Music ${fmtMoney(a.music)}</span>
       <span class="vb-chip vb-chip-mc">MC &amp; Host ${fmtMoney(a.mc)}</span>
     `;
   }
+}
+
+/* ── Export PDF ───────────────────────────────────────── */
+function exportPDF() {
+  if (!vbAlloc) return;
+  const a = vbAlloc;
+  const cats = [
+    { label: 'Venue & Setup',       color: '#C9A49A', i: 1 },
+    { label: 'Catering & Drinks',   color: '#7FB5A0', i: 6 },
+    { label: 'Florals & Décor',     color: '#8A9E8C', i: 2 },
+    { label: 'Photography & Video', color: '#B8956A', i: 3 },
+    { label: 'Music & DJ',          color: '#8A9EB8', i: 4 },
+    { label: 'MC & Host',           color: '#9E8AAA', i: 5 },
+  ];
+  const total = currentAmounts.slice(1).reduce((s, v) => s + v, 0);
+
+  // Meta line
+  const parts = [];
+  if (profile.city) parts.push(profile.city);
+  if (profile.date) {
+    const d = new Date(profile.date + 'T00:00:00');
+    parts.push(d.toLocaleDateString('en-CA', { month: 'long', year: 'numeric' }));
+  }
+  if (profile.guests) parts.push(profile.guests);
+  if (profile.style) parts.push(profile.style);
+  document.getElementById('pdf-meta').textContent = parts.join(' · ');
+
+  // Photo
+  document.getElementById('pdf-photo').src = vbScenePhoto;
+
+  // Category rows
+  document.getElementById('pdf-categories').innerHTML = cats.map(c => {
+    const amt = currentAmounts[c.i];
+    const pct = total > 0 ? Math.round(amt / total * 100) : 0;
+    return `<div class="pdf-cat-row">
+      <span class="pdf-cat-name"><span class="pdf-cat-dot" style="background:${c.color}"></span>${c.label}</span>
+      <span><span class="pdf-cat-amt">${fmtMoney(amt)}</span><span class="pdf-cat-pct">${pct}%</span></span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('pdf-total-val').textContent = fmtMoney(total);
+
+  // Budget bar segments
+  document.getElementById('pdf-bar-track').innerHTML = cats.map(c => {
+    const pct = total > 0 ? Math.round(currentAmounts[c.i] / total * 100) : 0;
+    return `<div class="pdf-bar-seg" style="width:${pct}%;background:${c.color}"></div>`;
+  }).join('');
+
+  window.print();
 }
 
 /* ── Parallax scene — cursor tracking ── */
