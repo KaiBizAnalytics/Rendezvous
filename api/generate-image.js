@@ -19,12 +19,12 @@ const SETTING_MAP = {
   'No preference': 'outdoor',
 };
 
-// Budget tier → decor scale description
+// Budget tier → concrete decor description (specific = visually distinct)
 const BUDGET_SCALE = {
-  budget:  'simple and elegantly understated',
-  mid:     'well-appointed with tasteful floral accents',
-  premium: 'lavish with elaborate decorations and premium finishes',
-  luxury:  'ultra-luxury opulent with grand floral installations and statement pieces',
+  budget:  'simple wooden arch with 2-3 small floral clusters, folding chairs, minimal aisle décor',
+  mid:     'tasteful arch draped with chiffon and medium floral clusters, petal-lined aisle, chiavari chairs',
+  premium: 'elaborate full-bloom floral arch overflowing with roses and greenery, tall floral stands lining the full aisle, lush draped fabric canopy',
+  luxury:  'ultra-luxury towering overhead floral canopy, hundreds of premium roses, dramatic 6-ft floral columns flanking the aisle, cascading bloom installations throughout',
 };
 
 // Top spending priority → visual feature to emphasise

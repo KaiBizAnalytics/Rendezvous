@@ -485,6 +485,10 @@
     .vcard-price { font-family: var(--serif); font-size: 16px; font-weight: 400; }
     .vcard-price-lbl { font-size: 10px; color: var(--muted); margin-top: 1px; }
     .vcard-cap { font-size: 11px; color: var(--muted); }
+    .vcard-desc { font-size: 12px; color: var(--text-2); font-style: italic; line-height: 1.45; margin-bottom: 10px; }
+    .vcard-rating { color: #B8964A; font-size: 12px; font-weight: 500; }
+    .vcard-setting { position: absolute; bottom: 11px; left: 11px; background: rgba(10,4,8,0.62); backdrop-filter: blur(6px); color: rgba(250,248,245,0.9); font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 10px; letter-spacing: 0.04em; pointer-events: none; }
+    .tag-sage { background: rgba(138,158,140,0.1); color: var(--sage); border-color: rgba(138,158,140,0.25); }
 
 
     /* ═══════════════════════════════════════════════ */
@@ -537,6 +541,19 @@
       background: linear-gradient(180deg, rgba(10,4,8,0.35) 0%, rgba(10,4,8,0.10) 40%, rgba(10,4,8,0.10) 60%, rgba(10,4,8,0.55) 100%);
       pointer-events: none;
     }
+
+    /* Regen loading overlay — sits above photo and callouts */
+    .vb-regen-overlay {
+      position: absolute; inset: 0; z-index: 60; border-radius: 8px;
+      background: rgba(10,4,8,0.78);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.35s var(--ease);
+    }
+    .vb-regen-overlay.active { opacity: 1; pointer-events: all; }
+    .vb-regen-msg { color: rgba(250,248,245,0.85); font-family: var(--serif); font-size: 17px; font-weight: 400; letter-spacing: 0.04em; }
+    .vb-regen-sub { color: rgba(250,248,245,0.45); font-size: 12px; letter-spacing: 0.06em; margin-top: -12px; }
+    .vb-regen-bar-track { width: 240px; height: 2px; background: rgba(250,248,245,0.15); border-radius: 2px; overflow: hidden; }
+    .vb-regen-bar-fill { height: 100%; width: 0%; background: var(--rose); border-radius: 2px; transition: width 0.7s var(--ease); }
 
     /* Callout boxes */
     .vb-callout {
@@ -1103,6 +1120,13 @@
     <img src="wedding_ceremony_pics/summer_outdoor_romantic.png" class="vb-photo" alt="Your ceremony scene" id="vb-photo">
     <div class="vb-photo-overlay"></div>
 
+    <!-- Regen progress overlay -->
+    <div class="vb-regen-overlay" id="vb-regen-overlay">
+      <div class="vb-regen-msg">Designing your scene…</div>
+      <div class="vb-regen-sub">This takes about 15–20 seconds</div>
+      <div class="vb-regen-bar-track"><div class="vb-regen-bar-fill" id="vb-regen-bar"></div></div>
+    </div>
+
     <!-- Callout 1: Venue & Setup -->
     <div class="vb-callout vb-c1" id="vbc-1" onclick="toggleCallout(1)">
       <div class="vb-c-label">Venue &amp; Setup <span class="vb-c-chevron">▾</span></div>
@@ -1509,44 +1533,44 @@ function startGen() {
 
 /* ── Vendor data ──────────────────────────────────────── */
 const vendors = [
-  { id:1,  cat:'venue', name:'The Fairmont Hotel Vancouver',             loc:'Downtown, Vancouver',              price:'$5,000–$25,000',       pLabel:'venue rental', cap:'Up to 1200 guests', tags:['Grand Ballroom','Historic','Luxury'],         match:97, emoji:'🏰' },
-  { id:2,  cat:'venue', name:'Rosewood Hotel Georgia',                   loc:'Downtown, Vancouver',              price:'$4,000–$15,000',       pLabel:'venue rental', cap:'Up to 400 guests',  tags:['Art Deco','Historic','Elegant'],              match:96, emoji:'🌹' },
-  { id:3,  cat:'venue', name:'Fairmont Pacific Rim',                     loc:'Coal Harbour, Vancouver',          price:'$5,000–$25,000+',      pLabel:'venue rental', cap:'Up to 600 guests',  tags:['Waterfront','Luxury','Rooftop'],              match:97, emoji:'🌊' },
-  { id:4,  cat:'venue', name:'JW Marriott Parq Vancouver',               loc:'Downtown / Yaletown, Vancouver',   price:'$5,000–$25,000+',      pLabel:'venue rental', cap:'Up to 800 guests',  tags:['Luxury','Modern','Grand Ballroom'],           match:95, emoji:'🏙️' },
-  { id:5,  cat:'venue', name:'The Westin Bayshore',                      loc:'Coal Harbour, Vancouver',          price:'$5,000–$20,000+',      pLabel:'venue rental', cap:'Up to 600 guests',  tags:['Waterfront','Luxury','Grand Ballroom'],       match:95, emoji:'⚓' },
-  { id:6,  cat:'venue', name:'Vancouver Rowing Club',                    loc:'Coal Harbour / Stanley Park, Vancouver', price:'$3,000–$8,000', pLabel:'venue rental', cap:'Up to 250 guests',  tags:['Waterfront','Historic','Rooftop'],            match:91, emoji:'🚣' },
-  { id:7,  cat:'venue', name:'Stanley Park Pavilion',                    loc:'Stanley Park, Vancouver',          price:'$2,900–$23,000',       pLabel:'venue rental', cap:'Up to 350 guests',  tags:['Garden','Historic','Romantic'],               match:93, emoji:'🌲' },
-  { id:8,  cat:'venue', name:'Teahouse in Stanley Park',                 loc:'Stanley Park, Vancouver',          price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 65 guests',   tags:['Intimate','Forest','Romantic'],               match:88, emoji:'🍵' },
-  { id:9,  cat:'venue', name:'Seasons in the Park',                      loc:'Queen Elizabeth Park, Vancouver',  price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 300 guests',  tags:['Views','Garden','Romantic'],                 match:89, emoji:'🌄' },
-  { id:10, cat:'venue', name:'Brock House Restaurant',                   loc:'Point Grey / Jericho Beach, Vancouver', price:'Contact for pricing', pLabel:'venue rental', cap:'Up to 300 guests', tags:['Waterfront','Historic','Garden'],           match:89, emoji:'🌊' },
-  { id:11, cat:'venue', name:'Cecil Green Park House (UBC)',              loc:'UBC / Point Grey, Vancouver',      price:'$2,500–$8,000',        pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Waterfront','Historic','Garden'],             match:93, emoji:'🏡' },
-  { id:12, cat:'venue', name:'UBC Botanical Garden',                     loc:'UBC / Point Grey, Vancouver',      price:'$2,500–$8,000',        pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Garden','Natural','Outdoor'],                match:88, emoji:'🌿' },
-  { id:13, cat:'venue', name:'VanDusen Botanical Garden / Shaughnessy Restaurant', loc:'Shaughnessy, Vancouver', price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 175 guests',  tags:['Garden','Natural','Romantic'],               match:90, emoji:'🌺' },
-  { id:14, cat:'venue', name:'Hycroft Manor',                            loc:'Shaughnessy, Vancouver',           price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 150 guests',  tags:['Historic','Estate','Garden'],                match:88, emoji:'🏛️' },
-  { id:15, cat:'venue', name:'The Permanent',                            loc:'Downtown / Gastown, Vancouver',    price:'$5,000–$18,000',       pLabel:'venue rental', cap:'Up to 500 guests',  tags:['Historic','Grand','Industrial'],             match:92, emoji:'🏦' },
-  { id:16, cat:'venue', name:'Heritage Hall',                            loc:'Mount Pleasant, Vancouver',        price:'$1,500–$4,500',        pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Historic','Heritage','Rustic'],              match:88, emoji:'🏟️' },
-  { id:17, cat:'venue', name:'Brix & Mortar',                            loc:'Yaletown, Vancouver',              price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 130 guests',  tags:['Historic','Intimate','Romantic'],            match:89, emoji:'🧱' },
-  { id:18, cat:'venue', name:'The Roundhouse Community Arts Centre',     loc:'Yaletown, Vancouver',              price:'$1,500–$6,000',        pLabel:'venue rental', cap:'Up to 500 guests',  tags:['Industrial','Historic','Urban'],             match:83, emoji:'🚂' },
-  { id:19, cat:'venue', name:'Venue 308',                                loc:'Strathcona, Vancouver',            price:'$2,500–$7,000',        pLabel:'venue rental', cap:'Up to 300 guests',  tags:['Industrial','Modern','Minimalist'],          match:81, emoji:'🏗️' },
-  { id:20, cat:'venue', name:'Dr. Sun Yat-Sen Classical Chinese Garden', loc:'Chinatown, Vancouver',             price:'$1,500–$5,000',        pLabel:'venue rental', cap:'Up to 100 guests',  tags:['Cultural','Historic','Garden'],              match:91, emoji:'⛩️' },
-  { id:21, cat:'venue', name:'Pipe Shop Venue',                          loc:'Shipyards / Lower Lonsdale, North Vancouver', price:'$4,000–$12,000', pLabel:'venue rental', cap:'Up to 450 guests', tags:['Industrial','Waterfront','Heritage'],      match:90, emoji:'⚙️' },
-  { id:22, cat:'venue', name:'Polygon Gallery',                          loc:'Shipyards / Lower Lonsdale, North Vancouver', price:'$3,500–$10,000', pLabel:'venue rental', cap:'Up to 250 guests', tags:['Modern','Waterfront','Architectural'],     match:91, emoji:'🎨' },
-  { id:23, cat:'venue', name:'Pinnacle Hotel at the Pier',               loc:'Lower Lonsdale, North Vancouver',  price:'$3,000–$10,000',       pLabel:'venue rental', cap:'Up to 350 guests',  tags:['Waterfront','Modern','Boutique'],            match:90, emoji:'⚓' },
-  { id:24, cat:'venue', name:'Grouse Mountain',                          loc:'Grouse Mountain, North Vancouver', price:'From $3,750',          pLabel:'venue rental', cap:'Up to 500 guests',  tags:['Mountain','Outdoor','Rustic'],               match:91, emoji:'⛰️' },
-  { id:25, cat:'venue', name:'Hart House Restaurant',                    loc:'Deer Lake Park, Burnaby',          price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Historic','Garden','Romantic'],              match:88, emoji:'🏚️' },
-  { id:26, cat:'venue', name:'Burnaby Village Museum',                   loc:'Deer Lake Park, Burnaby',          price:'$2,000–$6,000',        pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Historic','Rustic','Garden'],                match:83, emoji:'🎠' },
-  { id:27, cat:'venue', name:'Swaneset Bay Resort & Country Club',       loc:'Pitt Meadows',                     price:'$3,000–$10,000',       pLabel:'venue rental', cap:'Up to 350 guests',  tags:['Waterfront','Rustic','Resort'],              match:87, emoji:'🍇' },
-  { id:28, cat:'venue', name:'Westwood Plateau Golf & Country Club',     loc:'Westwood Plateau, Coquitlam',      price:'$3,000–$9,000',        pLabel:'venue rental', cap:'Up to 350 guests',  tags:['Mountain views','Luxury','Golf Club'],       match:85, emoji:'⛳' },
-  { id:29, cat:'venue', name:'UBC Boathouse',                            loc:'Steveston / Fraser River, Richmond', price:'Contact for pricing', pLabel:'venue rental', cap:'Up to 250 guests', tags:['Waterfront','Modern','Unique'],              match:86, emoji:'⛵' },
-  { id:30, cat:'venue', name:'Furry Creek Golf & Country Club',          loc:'Furry Creek, Howe Sound',          price:'$2,299–$6,499',        pLabel:'ceremony space', cap:'Up to 500 guests', tags:['Waterfront','Mountain','Waterfall'],        match:93, emoji:'🌊' },
-  { id:31, cat:'venue', name:'Sea to Sky Gondola',                       loc:'Squamish',                         price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Mountain','Adventure','Outdoor'],            match:92, emoji:'🚡' },
-  { id:32, cat:'venue', name:'Sunwolf Riverside Resort',                 loc:'Brackendale, Squamish',            price:'$15,000–$25,000',      pLabel:'venue rental', cap:'Up to 175 guests',  tags:['Forest','Riverside','Rustic'],               match:91, emoji:'🌲' },
-  { id:33, cat:'venue', name:'Cheekye Ranch',                            loc:'Squamish',                         price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 250 guests',  tags:['Ranch','Rustic','Riverside'],                match:91, emoji:'🐴' },
-  { id:34, cat:'venue', name:'Sitka Farms',                              loc:'Upper Squamish Valley, Squamish',  price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 150 guests',  tags:['Farm','Barn','Forest'],                      match:85, emoji:'🌾' },
-  { id:35, cat:'venue', name:'Fairmont Chateau Whistler',                loc:'Whistler Upper Village, Whistler', price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 500 guests',  tags:['Luxury','Mountain','Alpine'],                match:97, emoji:'🏔️' },
-  { id:36, cat:'venue', name:'Squamish Lil\'wat Cultural Centre',        loc:'Whistler Upper Village, Whistler', price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 300 guests',  tags:['Cultural','Indigenous','Architectural'],     match:92, emoji:'🪶' },
-  { id:37, cat:'venue', name:'Nita Lake Lodge',                          loc:'Whistler Creekside, Whistler',     price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Luxury','Lakeside','Romantic'],              match:93, emoji:'🏔️' },
-  { id:38, cat:'venue', name:'North Arm Farm',                           loc:'Pemberton Valley, Pemberton',      price:'Contact for pricing',  pLabel:'venue rental', cap:'Up to 200 guests',  tags:['Farm','Rustic','Mountain views'],            match:90, emoji:'🌾' },
+  { id:1,  cat:'venue', name:'The Fairmont Hotel Vancouver',             loc:'Downtown, Vancouver',              price:'$5,000–$25,000',       pLabel:'venue rental',   cap:'Up to 1200', tags:['Grand Ballroom','Historic','Luxury'],          emoji:'🏰', setting:'Indoor',  catering:'Included',  lgbtq:true, rating:4.5, desc:'Iconic castle-style luxury hotel in the heart of downtown with grand ballrooms and impeccable service.' },
+  { id:2,  cat:'venue', name:'Rosewood Hotel Georgia',                   loc:'Downtown, Vancouver',              price:'$4,000–$15,000',       pLabel:'venue rental',   cap:'Up to 400',  tags:['Art Deco','Historic','Elegant'],               emoji:'🌹', setting:'Indoor',  catering:'Included',  lgbtq:true, rating:4.6, desc:'Beautifully restored 1927 Art Deco landmark — intimate luxury and personal service.' },
+  { id:3,  cat:'venue', name:'Fairmont Pacific Rim',                     loc:'Coal Harbour, Vancouver',          price:'$5,000–$25,000+',      pLabel:'venue rental',   cap:'Up to 600',  tags:['Waterfront','Luxury','Rooftop'],               emoji:'🌊', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Contemporary five-star waterfront hotel with harbour and mountain views from elegant ballrooms.' },
+  { id:4,  cat:'venue', name:'JW Marriott Parq Vancouver',               loc:'Downtown / Yaletown, Vancouver',   price:'$5,000–$25,000+',      pLabel:'venue rental',   cap:'Up to 800',  tags:['Luxury','Modern','Grand Ballroom'],            emoji:'🏙️', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Modern luxury hotel with 13 event spaces including a rooftop park with mountain views.' },
+  { id:5,  cat:'venue', name:'The Westin Bayshore',                      loc:'Coal Harbour, Vancouver',          price:'$5,000–$20,000+',      pLabel:'venue rental',   cap:'Up to 600',  tags:['Waterfront','Luxury','Grand Ballroom'],        emoji:'⚓', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Iconic waterfront hotel on Coal Harbour Marina adjacent to Stanley Park and the Seawall.' },
+  { id:6,  cat:'venue', name:'Vancouver Rowing Club',                    loc:'Coal Harbour / Stanley Park, Vancouver', price:'$3,000–$8,000', pLabel:'venue rental',   cap:'Up to 250',  tags:['Waterfront','Historic','Rooftop'],             emoji:'🚣', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Historic 1911 clubhouse on Coal Harbour with panoramic mountain views next to Stanley Park.' },
+  { id:7,  cat:'venue', name:'Stanley Park Pavilion',                    loc:'Stanley Park, Vancouver',          price:'$2,900–$23,000',       pLabel:'venue rental',   cap:'Up to 350',  tags:['Garden','Historic','Romantic'],                emoji:'🌲', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Historic 1911 pavilion surrounded by fragrant rose gardens and century-old trees in Stanley Park.' },
+  { id:8,  cat:'venue', name:'Teahouse in Stanley Park',                 loc:'Stanley Park, Vancouver',          price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 65',   tags:['Intimate','Forest','Romantic'],                emoji:'🍵', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Intimate restaurant in Stanley Park forest — ThistleBEA Top 5 venue 2025. Guests order day-of.' },
+  { id:9,  cat:'venue', name:'Seasons in the Park',                      loc:'Queen Elizabeth Park, Vancouver',  price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 300',  tags:['Views','Garden','Romantic'],                  emoji:'🌄', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Elegant restaurant atop Little Mountain with panoramic Vancouver city and mountain views.' },
+  { id:10, cat:'venue', name:'Brock House Restaurant',                   loc:'Point Grey / Jericho Beach, Vancouver', price:'Contact for pricing', pLabel:'venue rental', cap:'Up to 300', tags:['Waterfront','Historic','Garden'],             emoji:'🌊', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Historic 1912 heritage home with sweeping English Bay ocean views at Jericho Beach.' },
+  { id:11, cat:'venue', name:'Cecil Green Park House (UBC)',              loc:'UBC / Point Grey, Vancouver',      price:'$2,500–$8,000',        pLabel:'venue rental',   cap:'Up to 200',  tags:['Waterfront','Historic','Garden'],              emoji:'🏡', setting:'Mixed',   catering:'External',  lgbtq:true, rating:4.7, desc:'Elegant 1912 mansion on a cliff above the Strait of Georgia at UBC — extraordinary ocean views.' },
+  { id:12, cat:'venue', name:'UBC Botanical Garden',                     loc:'UBC / Point Grey, Vancouver',      price:'$2,500–$8,000',        pLabel:'venue rental',   cap:'Up to 200',  tags:['Garden','Natural','Outdoor'],                 emoji:'🌿', setting:'Outdoor', catering:'External',  lgbtq:true, rating:4.7, desc:"One of Canada's oldest botanical gardens with a covered arbour and Japanese Nitobe Garden." },
+  { id:13, cat:'venue', name:'VanDusen Botanical Garden',                loc:'Shaughnessy, Vancouver',            price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 175',  tags:['Garden','Natural','Romantic'],                 emoji:'🌺', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.6, desc:'55-acre botanical oasis with Shaughnessy Restaurant and garden-to-table cuisine from the garden.' },
+  { id:14, cat:'venue', name:'Hycroft Manor',                            loc:'Shaughnessy, Vancouver',           price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 150',  tags:['Historic','Estate','Garden'],                 emoji:'🏛️', setting:'Mixed',   catering:'Inquire',   lgbtq:true, rating:4.6, desc:'Magnificent 1909 Edwardian mansion with Rose Garden and Juliet Balcony — featured in Martha Stewart Weddings.' },
+  { id:15, cat:'venue', name:'The Permanent',                            loc:'Downtown / Gastown, Vancouver',    price:'$5,000–$18,000',       pLabel:'venue rental',   cap:'Up to 500',  tags:['Historic','Grand','Industrial'],               emoji:'🏦', setting:'Indoor',  catering:'External',  lgbtq:true, rating:4.6, desc:"Stunning 1907 heritage bank with 30-ft coffered ceilings — one of Vancouver's most Instagrammed venues." },
+  { id:16, cat:'venue', name:'Heritage Hall',                            loc:'Mount Pleasant, Vancouver',        price:'$1,500–$4,500',        pLabel:'venue rental',   cap:'Up to 200',  tags:['Historic','Heritage','Rustic'],               emoji:'🏟️', setting:'Indoor',  catering:'External',  lgbtq:true, rating:4.5, desc:'Iconic 1916 heritage landmark on Main St — ThistleBEA Top 5 2025. Tables & chairs included.' },
+  { id:17, cat:'venue', name:'Brix & Mortar',                            loc:'Yaletown, Vancouver',              price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 130',  tags:['Historic','Intimate','Romantic'],              emoji:'🧱', setting:'Indoor',  catering:'Included',  lgbtq:true, rating:4.4, desc:'Yaletown restaurant in 1912 heritage brick with a stunning glass-covered courtyard. 350+ weddings hosted.' },
+  { id:18, cat:'venue', name:'The Roundhouse Community Arts Centre',     loc:'Yaletown, Vancouver',              price:'$1,500–$6,000',        pLabel:'venue rental',   cap:'Up to 500',  tags:['Industrial','Historic','Urban'],               emoji:'🚂', setting:'Mixed',   catering:'External',  lgbtq:true, rating:4.4, desc:'Heritage CPR locomotive roundhouse with original turntable, soaring ceilings, and exposed steel.' },
+  { id:19, cat:'venue', name:'Venue 308',                                loc:'Strathcona, Vancouver',            price:'$2,500–$7,000',        pLabel:'venue rental',   cap:'Up to 300',  tags:['Industrial','Modern','Minimalist'],            emoji:'🏗️', setting:'Indoor',  catering:'External',  lgbtq:true, rating:4.3, desc:'Raw industrial blank-canvas event space with high ceilings, polished concrete, and large windows.' },
+  { id:20, cat:'venue', name:'Dr. Sun Yat-Sen Classical Chinese Garden', loc:'Chinatown, Vancouver',             price:'$1,500–$5,000',        pLabel:'venue rental',   cap:'Up to 100',  tags:['Cultural','Historic','Garden'],                emoji:'⛩️', setting:'Outdoor', catering:'External',  lgbtq:true, rating:4.5, desc:"First full-scale Classical Chinese Garden outside China — Vancouver's most iconic cultural ceremony venue." },
+  { id:21, cat:'venue', name:'Pipe Shop Venue',                          loc:'Shipyards / Lower Lonsdale, North Vancouver', price:'$4,000–$12,000', pLabel:'venue rental', cap:'Up to 450', tags:['Industrial','Waterfront','Heritage'],         emoji:'⚙️', setting:'Indoor',  catering:'External',  lgbtq:true, rating:4.6, desc:'Restored 1940s heritage pipe-fitters factory at North Vancouver Shipyards — 9,000 sq ft with Burrard Inlet views.' },
+  { id:22, cat:'venue', name:'Polygon Gallery',                          loc:'Shipyards / Lower Lonsdale, North Vancouver', price:'$3,500–$10,000', pLabel:'venue rental', cap:'Up to 250', tags:['Modern','Waterfront','Architectural'],        emoji:'🎨', setting:'Indoor',  catering:'External',  lgbtq:true, rating:4.6, desc:'Award-winning art gallery with fully retractable glass walls and panoramic Vancouver skyline views.' },
+  { id:23, cat:'venue', name:'Pinnacle Hotel at the Pier',               loc:'Lower Lonsdale, North Vancouver',  price:'$3,000–$10,000',       pLabel:'venue rental',   cap:'Up to 350',  tags:['Waterfront','Modern','Boutique'],              emoji:'⚓', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'2020 BC Wedding Venue Award winner — boutique waterfront hotel with Vancouver skyline views.' },
+  { id:24, cat:'venue', name:'Grouse Mountain',                          loc:'Grouse Mountain, North Vancouver', price:'From $3,750',          pLabel:'venue rental',   cap:'Up to 500',  tags:['Mountain','Outdoor','Rustic'],                 emoji:'⛰️', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Iconic mountaintop venue 15 min from downtown — gondola access, alpine views, 9 indoor/outdoor spaces.' },
+  { id:25, cat:'venue', name:'Hart House Restaurant',                    loc:'Deer Lake Park, Burnaby',          price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 200',  tags:['Historic','Garden','Romantic'],                emoji:'🏚️', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Stately 1910 Tudor-revival mansion in Deer Lake Park — one of Metro Vancouver\'s largest tented outdoor venues.' },
+  { id:26, cat:'venue', name:'Burnaby Village Museum',                   loc:'Deer Lake Park, Burnaby',          price:'$2,000–$6,000',        pLabel:'venue rental',   cap:'Up to 200',  tags:['Historic','Rustic','Garden'],                 emoji:'🎠', setting:'Mixed',   catering:'External',  lgbtq:true, rating:4.7, desc:'Living history 1920s recreated village with antique carousel — extremely photogenic and whimsical.' },
+  { id:27, cat:'venue', name:'Swaneset Bay Resort & Country Club',       loc:'Pitt Meadows',                     price:'$3,000–$10,000',       pLabel:'venue rental',   cap:'Up to 350',  tags:['Waterfront','Rustic','Resort'],                emoji:'🍇', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Chateau-style resort with vineyard, lakefront views, and outdoor spaces — popular for Sikh ceremonies.' },
+  { id:28, cat:'venue', name:'Westwood Plateau Golf & Country Club',     loc:'Westwood Plateau, Coquitlam',      price:'$3,000–$9,000',        pLabel:'venue rental',   cap:'Up to 350',  tags:['Mountain views','Luxury','Golf Club'],         emoji:'⛳', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Prestigious golf club with panoramic Lower Mainland and mountain views from floor-to-ceiling windows.' },
+  { id:29, cat:'venue', name:'UBC Boathouse',                            loc:'Steveston / Fraser River, Richmond', price:'Contact for pricing', pLabel:'venue rental',  cap:'Up to 250',  tags:['Waterfront','Modern','Unique'],                emoji:'⛵', setting:'Mixed',   catering:'Inquire',   lgbtq:true, rating:4.5, desc:"Vancouver's only fully floating wedding venue on the Fraser River — stunning mountain views." },
+  { id:30, cat:'venue', name:'Furry Creek Golf & Country Club',          loc:'Furry Creek, Howe Sound',          price:'$2,299–$6,499',        pLabel:'ceremony space', cap:'Up to 500',  tags:['Waterfront','Mountain','Waterfall'],           emoji:'🌊', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.5, desc:"Celebrated 'BC's Most Scenic Venue' — Howe Sound oceanfront with a 100-ft cascading waterfall backdrop." },
+  { id:31, cat:'venue', name:'Sea to Sky Gondola',                       loc:'Squamish',                         price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 200',  tags:['Mountain','Adventure','Outdoor'],              emoji:'🚡', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.7, desc:'Iconic gondola venue with a legendary suspension bridge ceremony aisle and 360° panoramic mountain views.' },
+  { id:32, cat:'venue', name:'Sunwolf Riverside Resort',                 loc:'Brackendale, Squamish',            price:'$15,000–$25,000',      pLabel:'exclusive buyout', cap:'Up to 175', tags:['Forest','Riverside','Rustic'],                emoji:'🌲', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.7, desc:'Boutique riverside resort on 5 acres of old-growth forest — exclusive-use multi-day wedding weekends.' },
+  { id:33, cat:'venue', name:'Cheekye Ranch',                            loc:'Squamish',                         price:'Contact for pricing',  pLabel:'exclusive buyout', cap:'Up to 250', tags:['Ranch','Rustic','Riverside'],                 emoji:'🐴', setting:'Outdoor', catering:'External',  lgbtq:true, rating:4.8, desc:'60-acre horse rescue ranch beside Cheakamus River — the rescued horses move guests deeply.' },
+  { id:34, cat:'venue', name:'Sitka Farms',                              loc:'Upper Squamish Valley, Squamish',  price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 150',  tags:['Farm','Barn','Forest'],                       emoji:'🌾', setting:'Mixed',   catering:'Inquire',   lgbtq:true, rating:4.8, desc:"Squamish's stunning farm venue with renovated barn and fern-draped rainforest ceremony site." },
+  { id:35, cat:'venue', name:'Fairmont Chateau Whistler',                loc:'Whistler Upper Village, Whistler', price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 500',  tags:['Luxury','Mountain','Alpine'],                 emoji:'🏔️', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.5, desc:"Iconic ski-in/ski-out luxury resort at Blackcomb Mountain — Whistler's premier wedding destination for 25+ years." },
+  { id:36, cat:'venue', name:"Squamish Lil'wat Cultural Centre",         loc:'Whistler Upper Village, Whistler', price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 300',  tags:['Cultural','Indigenous','Architectural'],       emoji:'🪶', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Indigenous-owned venue in Whistler blending Squamish longhouse and Lil\'wat architecture — meaningful and stunning.' },
+  { id:37, cat:'venue', name:'Nita Lake Lodge',                          loc:'Whistler Creekside, Whistler',     price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 200',  tags:['Luxury','Lakeside','Romantic'],                emoji:'🏔️', setting:'Mixed',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Most romantic and intimate of Whistler\'s hotels — boutique lodge on the shores of Nita Lake.' },
+  { id:38, cat:'venue', name:'North Arm Farm',                           loc:'Pemberton Valley, Pemberton',      price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 200',  tags:['Farm','Rustic','Mountain views'],              emoji:'🌾', setting:'Outdoor', catering:'External',  lgbtq:true, rating:4.8, desc:'Working farm at the foot of Mt. Currie — famous for long-table field dinners with mountain panoramas.' },
   { id:39, cat:'caterer',      name:'Culinary Capers',           loc:'Vancouver',                  price:'$65 – $120',       pLabel:'per person',        cap:'20–500 guests',    tags:['Full service','Award-winning','Dietary'],  match:95, emoji:'🍽️' },
   { id:40, cat:'caterer',      name:'Pacific Table',             loc:'Vancouver',                  price:'$55 – $95',        pLabel:'per person',        cap:'30–200 guests',    tags:['Farm-to-table','Local','Seasonal'],        match:90, emoji:'🌾' },
   { id:41, cat:'caterer',      name:'Feastify Collective',       loc:'Burnaby & Vancouver',        price:'$45 – $80',        pLabel:'per person',        cap:'50–250 guests',    tags:['Cultural menus','Halal','Multi-cuisine'],  match:85, emoji:'🥘' },
@@ -1702,6 +1726,11 @@ function buildCard(v, delay) {
   const { score, reasons } = scoreVendor(v);
   const catLabel = CAT_LABELS[v.cat] || v.cat;
   const badgeColor = score >= 88 ? 'tag-sage' : 'tag-rose';
+  const settingBadge = v.setting ? `<div class="vcard-setting">${v.setting}</div>` : '';
+  const descLine = v.desc ? `<div class="vcard-desc">${v.desc}</div>` : '';
+  const cateringTag = v.catering ? `<span class="tag tag-sage">🍽 ${v.catering}</span>` : '';
+  const lgbtqTag = v.lgbtq ? `<span class="tag tag-sage">🏳️‍🌈 LGBTQ+</span>` : '';
+  const ratingLine = v.rating ? `<div class="vcard-rating">★ ${v.rating}</div>` : '';
   return `
     <div class="vcard" style="animation-delay:${delay}s;">
       <div class="vcard-img">
@@ -1710,16 +1739,21 @@ function buildCard(v, delay) {
         <button class="vcard-save${shortlist.has(v.id)?' saved':''}" onclick="toggleSave(${v.id},event)">
           ${shortlist.has(v.id)?'♥':'♡'}
         </button>
+        ${settingBadge}
       </div>
       <div class="vcard-body">
         <div class="vcard-cat">${catLabel}</div>
         <div class="vcard-name">${v.name}</div>
         <div class="vcard-loc">📍 ${v.loc}</div>
+        ${descLine}
         <div class="vcard-reasons">${reasons.map(r=>`<span class="vcard-reason">${r}</span>`).join('')}</div>
-        <div class="vcard-tags">${v.tags.map(t=>`<span class="tag tag-rose">${t}</span>`).join('')}</div>
+        <div class="vcard-tags">${v.tags.map(t=>`<span class="tag tag-rose">${t}</span>`).join('')}${cateringTag}${lgbtqTag}</div>
         <div class="vcard-foot">
           <div><div class="vcard-price">${v.price}</div><div class="vcard-price-lbl">${v.pLabel}</div></div>
-          <div class="vcard-cap">👥 ${v.cap}</div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            ${ratingLine}
+            <div class="vcard-cap">👥 ${v.cap}</div>
+          </div>
         </div>
       </div>
     </div>`;
@@ -1971,10 +2005,22 @@ function regenScene() {
   vbRegenLeft--;
   const btn = document.getElementById('vb-regen-btn');
   btn.disabled = true;
-  btn.textContent = '↻ Generating…';
-  const photo = document.getElementById('vb-photo');
-  photo.style.transition = 'opacity 0.4s';
-  photo.style.opacity = '0.2';
+  btn.innerHTML = '↻ Generating… <span style="opacity:0.5">(' + vbRegenLeft + ' left)</span>';
+
+  // Show progress overlay — hides callouts cleanly and gives user feedback
+  const overlay = document.getElementById('vb-regen-overlay');
+  const bar     = document.getElementById('vb-regen-bar');
+  overlay.classList.add('active');
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+
+  // Animated fake progress — ramps toward 85% then waits for API
+  const progSteps  = [12, 28, 45, 62, 78, 85];
+  const progDelays = [400, 1500, 3000, 5000, 8000, 12000];
+  const timers = progSteps.map((pct, i) =>
+    setTimeout(() => { bar.style.transition = 'width 0.7s var(--ease)'; bar.style.width = pct + '%'; }, progDelays[i])
+  );
+
   // Snapshot current amounts (preserve user edits across regen)
   const savedAmounts = currentAmounts.slice();
 
@@ -1986,25 +2032,34 @@ function regenScene() {
   profile.topVenue     = regenTopVenue ? regenTopVenue.name : profile.topVenue;
   profile.topVenueTags = regenTopVenue ? regenTopVenue.tags : profile.topVenueTags;
 
-  // Call DALL-E for a fresh image; fall back to local alternate on failure
   fetchSceneImage(profile).then(imageUrl => {
-    const newSrc = imageUrl || pickScenePhoto(profile, true);
-    photo.src = newSrc;
-    vbScenePhoto = newSrc;
-    const thumb = document.querySelector('.vb-summary-thumb');
-    if (thumb) thumb.style.background = `url('${newSrc}') center/cover`;
-    photo.style.opacity = '1';
-    btn.disabled = vbRegenLeft <= 0;
-    btn.innerHTML = '↻ Regenerate scene <span id="vb-regen-count" style="opacity:0.5">(' + vbRegenLeft + ' left)</span>';
-    if (vbRegenLeft <= 0) btn.title = 'Maximum regenerations reached for this session';
-    // Restore user-adjusted amounts
-    currentAmounts = savedAmounts;
-    [1,2,3,4,5,6].forEach(i => {
-      document.getElementById('vba-'+i).textContent = fmtMoney(currentAmounts[i]);
-      const inp = document.getElementById('vbi-'+i);
-      if (inp && inp.value) inp.value = currentAmounts[i];
-    });
-    refreshBudgetBar();
+    // Complete the bar, then reveal new image
+    timers.forEach(clearTimeout);
+    bar.style.transition = 'width 0.4s var(--ease)';
+    bar.style.width = '100%';
+
+    setTimeout(() => {
+      overlay.classList.remove('active');
+      const photo  = document.getElementById('vb-photo');
+      const newSrc = imageUrl || pickScenePhoto(profile, true);
+      photo.src = newSrc;
+      vbScenePhoto = newSrc;
+      const thumb = document.querySelector('.vb-summary-thumb');
+      if (thumb) thumb.style.background = `url('${newSrc}') center/cover`;
+
+      btn.disabled = vbRegenLeft <= 0;
+      btn.innerHTML = '↻ Regenerate scene <span id="vb-regen-count" style="opacity:0.5">(' + vbRegenLeft + ' left)</span>';
+      if (vbRegenLeft <= 0) btn.title = 'Maximum regenerations reached for this session';
+
+      // Restore user-adjusted amounts
+      currentAmounts = savedAmounts;
+      [1,2,3,4,5,6].forEach(i => {
+        document.getElementById('vba-'+i).textContent = fmtMoney(currentAmounts[i]);
+        const inp = document.getElementById('vbi-'+i);
+        if (inp && inp.value) inp.value = currentAmounts[i];
+      });
+      refreshBudgetBar();
+    }, 500);
   });
 }
 

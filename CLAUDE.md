@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repository Is
 
-This is a **product discovery workspace** for a Build-A-Thon project — not a code repository. There are no build commands, tests, or deployable artifacts. Work here involves analyzing documents, generating product artifacts, and supporting AI-assisted product discovery exercises.
+This is a **Build-A-Thon project** that began as a product discovery workspace and has evolved into a working deployed prototype. It now contains both product planning documents and a live single-file SPA prototype deployed on Vercel. Work here involves both product artifact generation (markdown documents) and direct prototype development in `index.html`.
 
 ---
 
@@ -27,8 +27,11 @@ Rendezvous is an AI-powered wedding planning concierge. The core value propositi
 | `session-4-claude-code/concept_brief_ai_wedding_concierge.md` | Synthesized concept brief covering the full product across both documents |
 | `session-4-claude-code/style_guide.md` | Full visual style guide — colors, typography, spacing, animation, components |
 | `session-4-claude-code/wedding-questionnaire.md` | Source questionnaire defining all intake form fields and options |
+| `session-4-claude-code/vancouver_wedding_venues.md` | Source of truth for all 38 Vancouver vendor records — used to populate and enrich vendor data |
+| `session-4-claude-code/build_progress.md` | Running log of features shipped, design decisions, and current status |
 | `index.html` | Live prototype — single-file SPA deployed on Vercel. All UI lives here. |
 | `index-backup.html` | Previous working version of the prototype (safe restore point) |
+| `api/generate-image.js` | Vercel serverless function — calls OpenAI `gpt-image-1` to generate the vision board scene |
 | `wedding photo.jpg` | Hero background photo. Replace this file to change the landing hero image. |
 | `Product Discovery/` | Workshop templates, examples, and AI persona prompt files |
 | `Interview/` | Interview snapshots for each of the five user personas |
@@ -111,7 +114,7 @@ When generating frontend for Rendezvous, apply these style constraints on top of
 ```js
 const profile = { name1, name2, email, phone, date, flexibility, city, venueStatus, venueName, setting, guests, budget, priority, style, colors, dietary, cultural }
 ```
-`startGen()` collects form values into `profile` and starts the generating view. `editProfile()` restores profile values to the form for re-editing from the dashboard.
+`startGen()` collects form values into `profile`, scores the top venue (`profile.topVenue`, `profile.topVenueTags`), sets `profile.liveBudget = 0`, then starts the generating view. `editProfile()` restores profile values to the form and shows the back-to-dashboard button (`intake-back-dash`).
 
 **Questionnaire coverage** — The 4 intake steps map to the questionnaire sections in `wedding-questionnaire.md`:
 - Step 1: Client Information + The Date
@@ -119,9 +122,17 @@ const profile = { name1, name2, email, phone, date, flexibility, city, venueStat
 - Step 3: Budget
 - Step 4: Style & Vision + Optional Details
 
+**Image generation flow** — `fetchSceneImage(profile)` POSTs to `/api/generate-image` with style, setting, date, colors, cultural, guests, budget, priority, city, `liveBudget`, `topVenue`, and `topVenueTags`. Returns `{ url, prompt }` where `url` is a base64 data URI. The `view-generating` view shows a staggered progress bar (`gen-bar`) with `setTimeout`-based fake progress while the API call runs.
+
+**Vision board + regen** — `regenScene()` re-scores the top venue from the live `currentAmounts`, sets `profile.liveBudget` from the sliders, calls `fetchSceneImage`, and shows a dark overlay (`vb-regen-overlay`, z-index 60) with its own progress bar (`vb-regen-bar`) covering the scene during generation. `vbRegenLeft` tracks remaining regenerations (starts at 3).
+
+**Vendor data** — The `vendors` array (38 records) covers 7 categories: venue, caterer, photographer, florist, music, mc, planner. Each vendor has: `id`, `cat`, `name`, `loc`, `price`, `pLabel`, `cap`, `tags`, `emoji`, `setting`, `desc`, `catering`, `lgbtq`, `rating`. The `scoreVendor(v)` function scores against the current `profile` across budget, capacity, style, cultural, and setting dimensions. `topN(list, n)` returns the top-n scored vendors from a list.
+
+**Vendor cards** — `buildCard(v, delay)` renders the full card template including setting badge, description, catering/LGBTQ+ tags, and rating. CSS classes: `.vcard-desc`, `.vcard-rating`, `.vcard-setting`, `.tag-sage`.
+
 **Fonts** — Fraunces + DM Sans loaded from Google Fonts in `<head>`.
 
-**Deployment** — Vercel static deploy. `index.html` at root is the entry point. `wedding photo.jpg` must be in the same directory.
+**Deployment** — Vercel. `index.html` at root is the entry point. `api/generate-image.js` is a serverless function. Requires `OPENAI_API_KEY` environment variable in Vercel project settings. `wedding photo.jpg` must be in the same directory as `index.html`.
 
 ---
 
