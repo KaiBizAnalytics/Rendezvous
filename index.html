@@ -121,7 +121,7 @@
     /* Photo layer — oversized so parallax movement never shows a gap */
     .scene-photo {
       position: absolute; inset: -6% -5%;
-      background-image: url('cover_photo.jpg');
+      background-image: url('cover_photo/cover_photo.jpg');
       background-size: cover; background-position: center;
       will-change: transform; z-index: 0;
     }
@@ -259,9 +259,9 @@
     .lpc-name { font-family: var(--serif); font-size: 22px; font-weight: 300; color: rgba(245,237,216,0.95); line-height: 1.25; }
     .lpc-hint { font-size: 11px; color: rgba(201,164,154,0.75); margin-top: 10px; letter-spacing: 0.03em; }
 
-    .lpc-venue-bg { background: linear-gradient(152deg, #5C4838 0%, #8E6E50 28%, #BF9870 55%, #E0C8A0 100%); }
-    .lpc-photo-bg { background: linear-gradient(145deg, #364E3C 0%, #5E8464 40%, #96B89A 75%, #C4D8C8 100%); }
-    .lpc-plan-bg  { background: linear-gradient(148deg, #6A5254 0%, #A08486 42%, #CCAEB0 70%, #EADAD8 100%); }
+    .lpc-venue-bg { background-image: url('cover_photo/browse_venues.jpg');      background-size: cover; background-position: center; }
+    .lpc-photo-bg { background-image: url('cover_photo/browse_photographer.jpg'); background-size: cover; background-position: center; }
+    .lpc-plan-bg  { background-image: url('cover_photo/browse_catering.jpg');     background-size: cover; background-position: center; }
 
     /* ── Dark CTA footer strip ── */
     .land-cta-strip {

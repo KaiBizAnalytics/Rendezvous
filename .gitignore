@@ -6,3 +6,5 @@ node_modules
 *.json
 !package.json
 !package-lock.json
+.pptx
+build_pitch_deck.py
