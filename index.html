@@ -483,6 +483,7 @@
     .vcard-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
     .vcard-foot { display: flex; align-items: flex-end; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); }
     .vcard-price { font-family: var(--serif); font-size: 16px; font-weight: 400; }
+    .vcard-price-est { color: var(--dark); }
     .vcard-price-lbl { font-size: 10px; color: var(--muted); margin-top: 1px; }
     .vcard-cap { font-size: 11px; color: var(--muted); }
     .vcard-desc { font-size: 12px; color: var(--text-2); font-style: italic; line-height: 1.45; margin-bottom: 10px; }
@@ -714,6 +715,95 @@
       .hiw-nav, .hiw-hero, .hiw-cta { padding-left: 28px; padding-right: 28px; }
       .hiw-steps, .hiw-features { margin-left: 28px; margin-right: 28px; }
     }
+
+    /* ── Request Quote Modal ────────────────────────────── */
+    .rq-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(10,4,8,0.55); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease);
+    }
+    .rq-overlay.active { opacity: 1; pointer-events: all; }
+    .rq-modal {
+      background: var(--surface); border-radius: 14px;
+      width: 100%; max-width: 560px; max-height: 88vh;
+      overflow-y: auto; box-shadow: 0 32px 80px rgba(10,4,8,0.22);
+      display: flex; flex-direction: column;
+      animation: fadeUp 0.3s var(--ease) both;
+    }
+    .rq-header {
+      padding: 24px 28px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .rq-title { font-family: var(--serif); font-size: 22px; font-weight: 300; }
+    .rq-subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; }
+    .rq-close { background: none; border: none; font-size: 22px; color: var(--muted); cursor: pointer; padding: 0; line-height: 1; }
+    .rq-close:hover { color: var(--dark); }
+    .rq-body { padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
+    .rq-vendor-list {
+      display: flex; flex-direction: column; gap: 7px;
+    }
+    .rq-vendor-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border-radius: 8px; padding: 9px 13px;
+      font-size: 13px;
+    }
+    .rq-vendor-chip-emoji { font-size: 16px; }
+    .rq-vendor-chip-name { font-weight: 500; flex: 1; }
+    .rq-vendor-chip-cat { font-size: 11px; color: var(--muted); }
+    .rq-section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .rq-section-label span { color: var(--rose); }
+    .rq-textarea {
+      width: 100%; min-height: 140px; padding: 13px 15px;
+      font-family: var(--sans); font-size: 13px; line-height: 1.6; color: var(--dark);
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px;
+      resize: vertical; outline: none; transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .rq-textarea:focus { border-color: var(--rose); }
+    .rq-profile-box {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px 16px; font-size: 12px; line-height: 1.8; color: var(--text-2);
+      pointer-events: none; user-select: none;
+    }
+    .rq-profile-box strong { color: var(--dark); font-weight: 600; display: block; margin-bottom: 6px; font-size: 13px; }
+    .rq-profile-row { display: flex; gap: 6px; }
+    .rq-profile-key { color: var(--muted); min-width: 120px; flex-shrink: 0; }
+    .rq-footer {
+      padding: 18px 28px 24px; border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .rq-note { font-size: 11px; color: var(--muted); max-width: 240px; line-height: 1.5; }
+    .rq-send-btn {
+      background: var(--rose); color: #fff; border: none;
+      padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    .rq-send-btn:hover { background: #b8887d; transform: translateY(-1px); }
+    /* Request Quote button in sidebar */
+    .sl-request-btn {
+      width: 100%; margin-top: 14px; padding: 11px 0;
+      background: var(--rose); color: #fff; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.2s, transform 0.15s; display: none;
+    }
+    .sl-request-btn:hover { background: #b8887d; transform: translateY(-1px); }
+    /* Sent confirmation popup */
+    .rq-sent-popup {
+      position: fixed; top: 50%; left: 50%; transform: translate(-50%, -60%);
+      z-index: 300; background: var(--surface); border-radius: 14px;
+      padding: 36px 44px; text-align: center; box-shadow: 0 32px 80px rgba(10,4,8,0.25);
+      opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+    }
+    .rq-sent-popup.active { opacity: 1; pointer-events: all; transform: translate(-50%, -50%); }
+    .rq-sent-icon { font-size: 44px; margin-bottom: 14px; }
+    .rq-sent-title { font-family: var(--serif); font-size: 22px; font-weight: 300; margin-bottom: 8px; }
+    .rq-sent-sub { font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 300px; }
+    .rq-sent-close { margin-top: 24px; padding: 10px 28px; background: var(--rose); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -756,7 +846,7 @@
     <!-- Bottom bar -->
     <div class="land-hero-bottom">
       <button class="land-bottom-pill" onclick="goHowItWorks()">See how it works</button>
-      <span class="land-bottom-year">© 2025</span>
+      <span class="land-bottom-year">© 2026</span>
     </div>
 
   </section>
@@ -1307,6 +1397,7 @@
       </div>
       <p class="shortlist-empty" id="sl-empty">Your shortlist is waiting.</p>
       <div id="sl-items"></div>
+      <button class="sl-request-btn" id="sl-request-btn" onclick="openQuoteModal()">Request Quote</button>
     </div>
   </aside>
 
@@ -1461,6 +1552,102 @@ function allocateBudget(prof) {
 }
 
 function fmtMoney(n) { return '$' + n.toLocaleString(); }
+
+/* ── Contextual pricing ───────────────────────────────────
+   pm:'mixed'    → flat rental + per-head F&B minimum (catering-included venues)
+   pm:'per_head' → per-head only (restaurants, caterers)
+   pm:'flat'     → flat rental, external catering
+   pm:'buyout'   → flat all-inclusive exclusive buyout
+   pm:'fixed'    → fixed package (photographers, florists, music, MC, planners)
+─────────────────────────────────────────────────────────── */
+const PRICING = {
+  // ── Venues ──────────────────────────────────────────────
+  1:  { pm:'mixed',    flatMin:5000,  flatMax:15000, phMin:130, phMax:180 }, // Fairmont Hotel Vancouver
+  2:  { pm:'mixed',    flatMin:4000,  flatMax:10000, phMin:150, phMax:200 }, // Rosewood Hotel Georgia
+  3:  { pm:'mixed',    flatMin:5000,  flatMax:12000, phMin:140, phMax:180 }, // Fairmont Pacific Rim
+  4:  { pm:'mixed',    flatMin:5000,  flatMax:12000, phMin:120, phMax:160 }, // JW Marriott Parq
+  5:  { pm:'mixed',    flatMin:4000,  flatMax:12000, phMin:110, phMax:150 }, // Westin Bayshore
+  6:  { pm:'mixed',    flatMin:3000,  flatMax:6000,  phMin:70,  phMax:100 }, // Vancouver Rowing Club
+  7:  { pm:'mixed',    flatMin:2900,  flatMax:5900,  phMin:75,  phMax:110 }, // Stanley Park Pavilion
+  8:  { pm:'per_head', flatMin:0,     flatMax:0,     phMin:85,  phMax:130 }, // Teahouse in Stanley Park
+  9:  { pm:'per_head', flatMin:0,     flatMax:0,     phMin:80,  phMax:130 }, // Seasons in the Park
+  10: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:75,  phMax:110 }, // Brock House Restaurant
+  11: { pm:'flat',     flatMin:2500,  flatMax:8000,  phMin:0,   phMax:0   }, // Cecil Green Park House
+  12: { pm:'flat',     flatMin:2500,  flatMax:8000,  phMin:0,   phMax:0   }, // UBC Botanical Garden
+  13: { pm:'mixed',    flatMin:2000,  flatMax:5000,  phMin:80,  phMax:120 }, // VanDusen Botanical Garden
+  14: { pm:'flat',     flatMin:3000,  flatMax:8000,  phMin:0,   phMax:0   }, // Hycroft Manor
+  15: { pm:'flat',     flatMin:5000,  flatMax:18000, phMin:0,   phMax:0   }, // The Permanent
+  16: { pm:'flat',     flatMin:1500,  flatMax:4500,  phMin:0,   phMax:0   }, // Heritage Hall
+  17: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:80,  phMax:120 }, // Brix & Mortar
+  18: { pm:'flat',     flatMin:1500,  flatMax:6000,  phMin:0,   phMax:0   }, // Roundhouse
+  19: { pm:'flat',     flatMin:2500,  flatMax:7000,  phMin:0,   phMax:0   }, // Venue 308
+  20: { pm:'flat',     flatMin:1500,  flatMax:5000,  phMin:0,   phMax:0   }, // Dr. Sun Yat-Sen Garden
+  21: { pm:'flat',     flatMin:4000,  flatMax:12000, phMin:0,   phMax:0   }, // Pipe Shop Venue
+  22: { pm:'flat',     flatMin:3500,  flatMax:10000, phMin:0,   phMax:0   }, // Polygon Gallery
+  23: { pm:'mixed',    flatMin:3000,  flatMax:8000,  phMin:95,  phMax:140 }, // Pinnacle Hotel at the Pier
+  24: { pm:'mixed',    flatMin:3750,  flatMax:10000, phMin:80,  phMax:110 }, // Grouse Mountain
+  25: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:85,  phMax:125 }, // Hart House Restaurant
+  26: { pm:'flat',     flatMin:2000,  flatMax:6000,  phMin:0,   phMax:0   }, // Burnaby Village Museum
+  27: { pm:'mixed',    flatMin:3000,  flatMax:6000,  phMin:70,  phMax:95  }, // Swaneset Bay Resort
+  28: { pm:'mixed',    flatMin:3000,  flatMax:6000,  phMin:65,  phMax:90  }, // Westwood Plateau
+  29: { pm:'flat',     flatMin:3000,  flatMax:10000, phMin:0,   phMax:0   }, // UBC Boathouse
+  30: { pm:'mixed',    flatMin:2299,  flatMax:6499,  phMin:65,  phMax:85  }, // Furry Creek
+  31: { pm:'mixed',    flatMin:3000,  flatMax:6000,  phMin:75,  phMax:100 }, // Sea to Sky Gondola
+  32: { pm:'buyout',   flatMin:15000, flatMax:25000, phMin:0,   phMax:0   }, // Sunwolf Riverside Resort
+  33: { pm:'flat',     flatMin:8000,  flatMax:20000, phMin:0,   phMax:0   }, // Cheekye Ranch
+  34: { pm:'flat',     flatMin:6000,  flatMax:15000, phMin:0,   phMax:0   }, // Sitka Farms
+  35: { pm:'mixed',    flatMin:5000,  flatMax:15000, phMin:130, phMax:180 }, // Fairmont Chateau Whistler
+  36: { pm:'mixed',    flatMin:3000,  flatMax:8000,  phMin:85,  phMax:120 }, // Squamish Lil'wat Cultural Centre
+  37: { pm:'mixed',    flatMin:4000,  flatMax:10000, phMin:110, phMax:150 }, // Nita Lake Lodge
+  38: { pm:'flat',     flatMin:8000,  flatMax:20000, phMin:0,   phMax:0   }, // North Arm Farm
+  // ── Caterers ────────────────────────────────────────────
+  39: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:65,  phMax:120 }, // Culinary Capers
+  40: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:55,  phMax:95  }, // Pacific Table
+  41: { pm:'per_head', flatMin:0,     flatMax:0,     phMin:45,  phMax:80  }, // Feastify Collective
+  // ── Photographers ───────────────────────────────────────
+  42: { pm:'fixed',    flatMin:4200,  flatMax:7500,  phMin:0,   phMax:0   }, // Studio Atelier
+  43: { pm:'fixed',    flatMin:3000,  flatMax:5500,  phMin:0,   phMax:0   }, // Golden Hour Co.
+  44: { pm:'fixed',    flatMin:2800,  flatMax:4800,  phMin:0,   phMax:0   }, // Luminara Photo
+  // ── Planners ────────────────────────────────────────────
+  45: { pm:'fixed',    flatMin:3500,  flatMax:6000,  phMin:0,   phMax:0   }, // Gather Events
+  46: { pm:'fixed',    flatMin:2500,  flatMax:5000,  phMin:0,   phMax:0   }, // The Wedding Atelier
+  47: { pm:'fixed',    flatMin:1800,  flatMax:3500,  phMin:0,   phMax:0   }, // Bloom & Co.
+  // ── Florists ────────────────────────────────────────────
+  48: { pm:'fixed',    flatMin:2500,  flatMax:6000,  phMin:0,   phMax:0   }, // Garden & Grace Florals
+  49: { pm:'fixed',    flatMin:1800,  flatMax:4500,  phMin:0,   phMax:0   }, // The Wild Botanist
+  50: { pm:'fixed',    flatMin:2200,  flatMax:5500,  phMin:0,   phMax:0   }, // Oui Floral
+  51: { pm:'fixed',    flatMin:1500,  flatMax:3500,  phMin:0,   phMax:0   }, // Pacific Blooms Co.
+  52: { pm:'fixed',    flatMin:2000,  flatMax:5000,  phMin:0,   phMax:0   }, // Foliage & Bloom
+  // ── Music ───────────────────────────────────────────────
+  53: { pm:'fixed',    flatMin:1800,  flatMax:3500,  phMin:0,   phMax:0   }, // Encore Entertainment
+  54: { pm:'fixed',    flatMin:1200,  flatMax:2800,  phMin:0,   phMax:0   }, // The String Collective
+  55: { pm:'fixed',    flatMin:1500,  flatMax:2800,  phMin:0,   phMax:0   }, // Anthem DJ Group
+  56: { pm:'fixed',    flatMin:3500,  flatMax:6000,  phMin:0,   phMax:0   }, // Pacific Coast Band
+  57: { pm:'fixed',    flatMin:900,   flatMax:1800,  phMin:0,   phMax:0   }, // Ambient Sound Co.
+  // ── MC & Host ───────────────────────────────────────────
+  58: { pm:'fixed',    flatMin:1500,  flatMax:2500,  phMin:0,   phMax:0   }, // Mark Chen Emcee
+  59: { pm:'fixed',    flatMin:600,   flatMax:1200,  phMin:0,   phMax:0   }, // Ceremony Co. Officiants
+  60: { pm:'fixed',    flatMin:1800,  flatMax:3200,  phMin:0,   phMax:0   }, // The Host Agency
+  61: { pm:'fixed',    flatMin:1200,  flatMax:2200,  phMin:0,   phMax:0   }, // Simply Spoken MC
+  62: { pm:'fixed',    flatMin:400,   flatMax:800,   phMin:0,   phMax:0   }, // Unity Officiant Services
+};
+
+function contextualPrice(v, guests) {
+  const p = PRICING[v.id];
+  if (!p) return null;
+  const g = guests || 80;
+  let low, high;
+  if (p.pm === 'flat' || p.pm === 'buyout' || p.pm === 'fixed') {
+    low = p.flatMin; high = p.flatMax;
+  } else if (p.pm === 'per_head') {
+    low = p.phMin * g; high = p.phMax * g;
+  } else if (p.pm === 'mixed') {
+    low = p.flatMin + p.phMin * g;
+    high = p.flatMax + p.phMax * g;
+  }
+  if (!low || !high) return null;
+  return { low, high, pm: p.pm };
+}
 
 /* ── DALL-E image generation ──────────────────────────── */
 async function fetchSceneImage(prof) {
@@ -1765,7 +1952,17 @@ function buildCard(v, delay) {
         <div class="vcard-reasons">${reasons.map(r=>`<span class="vcard-reason">${r}</span>`).join('')}</div>
         <div class="vcard-tags">${v.tags.map(t=>`<span class="tag tag-rose">${t}</span>`).join('')}${cateringTag}${lgbtqTag}</div>
         <div class="vcard-foot">
-          <div><div class="vcard-price">${v.price}</div><div class="vcard-price-lbl">${v.pLabel}</div></div>
+          ${(() => {
+            const guests = parseGuestCount(profile.guests);
+            const est = contextualPrice(v, guests);
+            if (est) {
+              const range = fmtMoney(Math.round(est.low/100)*100) + '–' + fmtMoney(Math.round(est.high/100)*100);
+              const isGuest = est.pm === 'per_head' || est.pm === 'mixed';
+              const lbl = isGuest ? `est. for ${guests} guests` : v.pLabel;
+              return `<div><div class="vcard-price vcard-price-est">~${range}</div><div class="vcard-price-lbl" style="color:var(--sage)">${lbl}</div></div>`;
+            }
+            return `<div><div class="vcard-price">${v.price}</div><div class="vcard-price-lbl">${v.pLabel}</div></div>`;
+          })()}
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
             ${ratingLine}
             <div class="vcard-cap">👥 ${v.cap}</div>
@@ -1823,14 +2020,18 @@ function toggleSave(id, e) {
 
 function updateShortlist() {
   const items = Array.from(shortlist).map(id => vendors.find(v => v.id === id));
-  document.getElementById('sl-count').textContent = shortlist.size + ' saved';
-  document.getElementById('sl-empty').style.display = shortlist.size ? 'none' : 'block';
+  const n = shortlist.size;
+  document.getElementById('sl-count').textContent = n + ' saved';
+  document.getElementById('sl-empty').style.display = n ? 'none' : 'block';
   document.getElementById('sl-items').innerHTML = items.map(v => `
     <div class="sl-item">
       <div><div class="sl-name">${v.name}</div><div class="sl-cat">${CAT_LABELS[v.cat]||v.cat}</div></div>
       <button class="sl-remove" onclick="removeSave(${v.id})">×</button>
     </div>
   `).join('');
+  const btn = document.getElementById('sl-request-btn');
+  btn.style.display = n ? 'block' : 'none';
+  btn.textContent = `✉ Request Quote${n !== 1 ? 's' : ''} (${n})`;
 }
 
 function removeSave(id) {
@@ -2195,6 +2396,149 @@ function exportPDF() {
   }
   tick();
 })();
+</script>
+
+<!-- ── Request Quote Modal ──────────────────────────────── -->
+<div class="rq-overlay" id="rq-overlay">
+  <div class="rq-modal">
+    <div class="rq-header">
+      <div>
+        <div class="rq-title">Request Quotes</div>
+        <div class="rq-subtitle" id="rq-subtitle">Sending enquiries to your shortlisted vendors</div>
+      </div>
+      <button class="rq-close" onclick="closeQuoteModal()">×</button>
+    </div>
+    <div class="rq-body">
+      <!-- Vendor list -->
+      <div>
+        <div class="rq-section-label">Vendors you're enquiring</div>
+        <div class="rq-vendor-list" id="rq-vendor-list"></div>
+      </div>
+      <!-- Editable message -->
+      <div>
+        <div class="rq-section-label">Message <span>*</span> required</div>
+        <textarea class="rq-textarea" id="rq-message" placeholder="Write your message…"></textarea>
+      </div>
+      <!-- Profile details (read-only) -->
+      <div>
+        <div class="rq-section-label">Your wedding details — included automatically</div>
+        <div class="rq-profile-box" id="rq-profile-box"></div>
+      </div>
+    </div>
+    <div class="rq-footer">
+      <p class="rq-note">Each vendor will receive your message and wedding details separately.</p>
+      <button class="rq-send-btn" id="rq-send-btn" onclick="sendQuotes()">Send Requests</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Sent confirmation popup ──────────────────────────── -->
+<div class="rq-sent-popup" id="rq-sent-popup">
+  <div class="rq-sent-icon">✉️</div>
+  <div class="rq-sent-title">Requests sent!</div>
+  <div class="rq-sent-sub" id="rq-sent-sub">Your enquiries are on their way. Vendors typically respond within 1–2 business days.</div>
+  <button class="rq-sent-close" onclick="closeSentPopup()">Back to dashboard</button>
+</div>
+
+<script>
+/* ── Quote request logic ──────────────────────────────────── */
+
+function buildQuoteMessage() {
+  let datePart = '';
+  if (profile.date) {
+    const d = new Date(profile.date + 'T00:00:00');
+    const formatted = d.toLocaleDateString('en-CA', { year:'numeric', month:'long', day:'numeric' });
+    const flexible = profile.flexibility && profile.flexibility !== 'Set in stone';
+    datePart = flexible ? ` around ${formatted}` : ` on ${formatted}`;
+  }
+  const guestClean = profile.guests ? profile.guests.replace(/\s*\(.*?\)/g, '').trim() : '';
+  const guests = guestClean ? ` with ${guestClean} guests` : '';
+  return `Hi! We're planning our wedding${datePart}${guests} and would love to know what services and packages you offer, along with your pricing. Please let us know if you're available and what we can expect. Thank you!`;
+}
+
+function buildProfileBox() {
+  const fmt = (val, fallback='—') => val || fallback;
+  const dateDisplay = profile.date
+    ? new Date(profile.date + 'T00:00:00').toLocaleDateString('en-CA', { year:'numeric', month:'long', day:'numeric' })
+      + (profile.flexibility && profile.flexibility !== 'Set in stone' ? ' (flexible)' : ' (confirmed)')
+    : '—';
+
+  const liveTotal = currentAmounts.slice(1).reduce((a,b)=>a+b,0);
+  const budgetDisplay = liveTotal > 0 ? fmtMoney(liveTotal) + ' total' : fmt(profile.budget);
+
+  const allRows = [
+    ['Date',          dateDisplay],
+    ['Guests',        fmt(profile.guests)],
+    ['Setting',       fmt(profile.setting)],
+    ['Budget',        budgetDisplay],
+    ['Style',         fmt(profile.style)],
+    ['Traditions',    fmt(profile.cultural)],
+    ['Dietary needs', fmt(profile.dietary)],
+  ];
+
+  return '<strong>My Wedding Details</strong>'
+    + allRows.map(([k,v]) =>
+        `<div class="rq-profile-row"><span class="rq-profile-key">${k}</span><span>${v}</span></div>`
+      ).join('');
+}
+
+function openQuoteModal() {
+  const items = Array.from(shortlist).map(id => vendors.find(v => v.id === id));
+  const n = items.length;
+
+  // Subtitle
+  document.getElementById('rq-subtitle').textContent =
+    `Sending enquiries to ${n} shortlisted vendor${n !== 1 ? 's' : ''}`;
+
+  // Vendor chips
+  document.getElementById('rq-vendor-list').innerHTML = items.map(v => `
+    <div class="rq-vendor-chip">
+      <span class="rq-vendor-chip-emoji">${v.emoji}</span>
+      <span class="rq-vendor-chip-name">${v.name}</span>
+      <span class="rq-vendor-chip-cat">${CAT_LABELS[v.cat]||v.cat}</span>
+    </div>
+  `).join('');
+
+  // Pre-populated message
+  document.getElementById('rq-message').value = buildQuoteMessage();
+
+  // Profile box
+  document.getElementById('rq-profile-box').innerHTML = buildProfileBox();
+
+  // Send button label
+  document.getElementById('rq-send-btn').textContent = `Send ${n} Request${n !== 1 ? 's' : ''}`;
+
+  // Show modal
+  document.getElementById('rq-overlay').classList.add('active');
+}
+
+function closeQuoteModal() {
+  document.getElementById('rq-overlay').classList.remove('active');
+}
+
+function sendQuotes() {
+  const msg = document.getElementById('rq-message').value.trim();
+  if (!msg) {
+    document.getElementById('rq-message').focus();
+    document.getElementById('rq-message').style.borderColor = '#C06060';
+    setTimeout(() => document.getElementById('rq-message').style.borderColor = '', 1500);
+    return;
+  }
+  const n = shortlist.size;
+  document.getElementById('rq-sent-sub').textContent =
+    `Your ${n} enquier${n !== 1 ? 'ies have' : 'y has'} been sent. Vendors typically respond within 1–2 business days.`;
+  closeQuoteModal();
+  document.getElementById('rq-sent-popup').classList.add('active');
+}
+
+function closeSentPopup() {
+  document.getElementById('rq-sent-popup').classList.remove('active');
+}
+
+// Close modal on backdrop click
+document.getElementById('rq-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeQuoteModal();
+});
 </script>
 </body>
 </html>
