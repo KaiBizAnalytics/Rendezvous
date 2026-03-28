@@ -2,6 +2,32 @@ const OpenAI = require('openai');
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Cultural tradition → specific visible decor elements for the image model
+const CULTURAL_DESCRIPTORS = {
+  'chinese':   'red silk ribbons, gold double-happiness characters on archway panels, red paper lanterns, peony and plum blossom arrangements in red and gold',
+  'indian':    'marigold garland strings draped over the arch, mandap pillars wrapped in orange and yellow blooms, vibrant saffron and red fabric canopy',
+  'hindu':     'marigold garland strings draped over the arch, mandap pillars wrapped in orange and yellow blooms, vibrant saffron and red fabric canopy',
+  'south asian': 'marigold garland strings, richly draped saffron and red fabric, floral rangoli patterns on the aisle',
+  'sikh':      'white and gold draped canopy, marigold garland strings, warm amber tones throughout',
+  'jewish':    'white fabric chuppah supported by four poles, draped with flowing white fabric and fresh flowers',
+  'persian':   'sofreh aghd cloth on a low table with mirror and candlesticks, white florals and greenery throughout',
+  'filipino':  'white and ivory draped arch with tropical blooms, greenery canopy, string lights',
+  'greek':     'white columns with ivy garlands, olive branch accents, blue and white ribbon details',
+  'italian':   'terracotta urns with overflowing roses, cypress tree silhouettes flanking the aisle, warm stone archway',
+  'mexican':   'papel picado banners, marigold garlands draped on the arch, vibrant orange and yellow blooms',
+  'lgbtq+':    'rainbow ribbon accents woven through white florals, inclusive and joyful decor',
+};
+
+function getCulturalDesc(cultural) {
+  if (!cultural) return null;
+  const lower = cultural.toLowerCase();
+  for (const [key, desc] of Object.entries(CULTURAL_DESCRIPTORS)) {
+    if (lower.includes(key)) return desc;
+  }
+  // Fallback: pass the raw text but with a more specific instruction
+  return `${cultural} cultural ceremony decor elements visibly incorporated`;
+}
+
 // Style → descriptor phrases that steer toward realism, not fantasy
 const STYLE_DESCRIPTORS = {
   'Elegant & Formal':    'elegant, structured symmetry, refined luxury decor',
@@ -112,8 +138,9 @@ function buildPrompt(profile) {
   const priorityNote = PRIORITY_EMPHASIS[profile.priority] || '';
   if (priorityNote) prompt += ` FEATURE: ${priorityNote}.`;
 
-  if (profile.cultural) {
-    prompt += ` Subtle ${profile.cultural} cultural design elements incorporated into the decor.`;
+  const culturalDesc = getCulturalDesc(profile.cultural);
+  if (culturalDesc) {
+    prompt += ` CULTURAL ELEMENTS (must be clearly visible): ${culturalDesc}.`;
   }
 
   return prompt;
