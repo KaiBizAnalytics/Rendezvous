@@ -463,7 +463,9 @@
     .vcard { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.3s ease-out, box-shadow 0.3s ease-out; animation: fadeUp 0.6s var(--ease) backwards; }
     .vcard:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(44,36,32,0.09); }
 
-    .vcard-img { height: 150px; background: var(--surface-2); position: relative; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: .5; }
+    .vcard-img { height: 210px; background: var(--surface-2); position: relative; display: flex; align-items: center; justify-content: center; font-size: 48px; opacity: .5; overflow: hidden; }
+    .vcard-img.has-photo { opacity: 1; background-size: cover; background-position: center; }
+    .vcard-img.has-photo span { display: none; }
     .vcard-badge { position: absolute; top: 11px; left: 11px; }
     .vcard-save {
       position: absolute; top: 11px; right: 11px;
@@ -1734,7 +1736,7 @@ const vendors = [
   { id:2,  cat:'venue', name:'Rosewood Hotel Georgia',                   loc:'Downtown, Vancouver',              price:'$4,000–$15,000',       pLabel:'venue rental',   cap:'Up to 400',  tags:['Art Deco','Historic','Elegant','Luxury','Intimate','Heritage'],               emoji:'🌹', setting:'Indoor',  catering:'Included',  lgbtq:true, rating:4.6, desc:'Beautifully restored 1927 Art Deco landmark — intimate luxury and personal service.' },
   { id:3,  cat:'venue', name:'Fairmont Pacific Rim',                     loc:'Coal Harbour, Vancouver',          price:'$5,000–$25,000+',      pLabel:'venue rental',   cap:'Up to 600',  tags:['Waterfront','Luxury','Rooftop','Modern','Elegant','Grand Ballroom'],               emoji:'🌊', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Contemporary five-star waterfront hotel with harbour and mountain views from elegant ballrooms.' },
   { id:4,  cat:'venue', name:'JW Marriott Parq Vancouver',               loc:'Downtown / Yaletown, Vancouver',   price:'$5,000–$25,000+',      pLabel:'venue rental',   cap:'Up to 800',  tags:['Luxury','Modern','Grand Ballroom','Architectural','Rooftop','Elegant'],            emoji:'🏙️', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Modern luxury hotel with 13 event spaces including a rooftop park with mountain views.' },
-  { id:5,  cat:'venue', name:'The Westin Bayshore',                      loc:'Coal Harbour, Vancouver',          price:'$5,000–$20,000+',      pLabel:'venue rental',   cap:'Up to 600',  tags:['Waterfront','Luxury','Grand Ballroom','Elegant','Garden','Romantic'],        emoji:'⚓', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Iconic waterfront hotel on Coal Harbour Marina adjacent to Stanley Park and the Seawall.' },
+  { id:5,  cat:'venue', name:'The Westin Bayshore',                      loc:'Coal Harbour, Vancouver',          price:'$5,000–$20,000+',      pLabel:'venue rental',   cap:'Up to 600',  tags:['Waterfront','Luxury','Grand Ballroom','Elegant','Garden','Romantic'],        emoji:'⚓', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.6, desc:'Iconic waterfront hotel on Coal Harbour Marina adjacent to Stanley Park and the Seawall.' },
   { id:6,  cat:'venue', name:'Vancouver Rowing Club',                    loc:'Coal Harbour / Stanley Park, Vancouver', price:'$3,000–$8,000', pLabel:'venue rental',   cap:'Up to 250',  tags:['Waterfront','Historic','Rooftop','Intimate','Romantic','Heritage'],             emoji:'🚣', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Historic 1911 clubhouse on Coal Harbour with panoramic mountain views next to Stanley Park.' },
   { id:7,  cat:'venue', name:'Stanley Park Pavilion',                    loc:'Stanley Park, Vancouver',          price:'$2,900–$23,000',       pLabel:'venue rental',   cap:'Up to 350',  tags:['Garden','Historic','Romantic','Natural','Lush blooms','Heritage'],                emoji:'🌲', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.5, desc:'Historic 1911 pavilion surrounded by fragrant rose gardens and century-old trees in Stanley Park.' },
   { id:8,  cat:'venue', name:'Teahouse in Stanley Park',                 loc:'Stanley Park, Vancouver',          price:'Contact for pricing',  pLabel:'venue rental',   cap:'Up to 65',   tags:['Intimate','Forest','Romantic','Garden','Natural light','Unique'],                emoji:'🍵', setting:'Indoor & Outdoor',   catering:'Included',  lgbtq:true, rating:4.4, desc:'Intimate restaurant in Stanley Park forest — ThistleBEA Top 5 venue 2025. Guests order day-of.' },
@@ -1804,6 +1806,12 @@ const shortlist = new Set();
 const CAT_LABELS = {
   venue: 'Venues', caterer: 'Caterers', photographer: 'Photographers',
   florist: 'Florists', music: 'Music & Entertainment', mc: 'MC & Host', planner: 'Planners'
+};
+// Vendor photos — keyed by vendor id, relative to site root
+const VENDOR_PHOTOS = {
+  5:  'vendor_photo/westin_bayshore.jpg',
+  6:  'vendor_photo/vancouver_rowing_club.jpg',
+  7:  'vendor_photo/stanley_park_pavilion.jpg',
 };
 const STYLE_KEYWORDS = {
   // Black-tie, ballrooms, chandeliers, classic architecture, upscale hotels
@@ -1952,7 +1960,7 @@ function buildCard(v, delay) {
   const ratingLine = v.rating ? `<div class="vcard-rating">★ ${v.rating}</div>` : '';
   return `
     <div class="vcard" style="animation-delay:${delay}s;">
-      <div class="vcard-img">
+      ${(() => { const ph = VENDOR_PHOTOS[v.id]; return `<div class="vcard-img${ph?' has-photo':''}"${ph?` style="background-image:url('${ph}')"`:''}>`; })()}
         <span>${v.emoji}</span>
         <button class="vcard-save${shortlist.has(v.id)?' saved':''}" onclick="toggleSave(${v.id},event)">
           ${shortlist.has(v.id)?'♥':'♡'}
@@ -1980,7 +1988,7 @@ function buildCard(v, delay) {
           })()}
           <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
             ${ratingLine}
-            <div class="vcard-cap">👥 ${v.cap}</div>
+            <div class="vcard-cap">👥 ${v.cap}${v.cap.toLowerCase().includes('guest') ? '' : ' guests'}</div>
           </div>
         </div>
       </div>
@@ -2001,7 +2009,9 @@ function renderVendors(cat) {
   const countEl = document.getElementById('v-count');
 
   if (cat === 'all') {
-    const catOrder = ['venue','caterer','photographer','florist','music','mc','planner'];
+    const topVenues = topN(vendors.filter(v => v.cat === 'venue'), 3);
+    const allInHouseCatering = topVenues.length > 0 && topVenues.every(v => v.catering === 'Included');
+    const catOrder = ['venue', ...(allInHouseCatering ? [] : ['caterer']), 'photographer','florist','music','mc','planner'];
     let html = '';
     let total = 0;
     catOrder.forEach(c => {
@@ -2548,7 +2558,7 @@ function sendQuotes() {
   }
   const n = shortlist.size;
   document.getElementById('rq-sent-sub').textContent =
-    `Your ${n} enquier${n !== 1 ? 'ies have' : 'y has'} been sent. Vendors typically respond within 1–2 business days.`;
+    `Your ${n} enquier${n !== 1 ? 'ies have' : 'y has'} been sent. We’ll connect you with your shortlisted vendors and they’ll be in touch soon!`;
   closeQuoteModal();
   document.getElementById('rq-sent-popup').classList.add('active');
 }

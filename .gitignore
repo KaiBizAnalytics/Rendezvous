@@ -8,3 +8,4 @@ node_modules
 !package-lock.json
 *.pptx
 build_pitch_deck.py
+rendezvous_pitch_script.md
