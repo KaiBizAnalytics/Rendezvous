@@ -40,6 +40,10 @@ A couple-first AI concierge that inverts the discovery model:
 | [`index-backup.html`](index-backup.html) | Previous stable version (safe restore point) |
 | [`api/generate-image.js`](api/generate-image.js) | Vercel serverless function — calls OpenAI `gpt-image-1` to generate the vision board scene |
 | [`wedding photo.jpg`](wedding%20photo.jpg) | Hero background photo for the landing page |
+| [`cover_photo/`](cover_photo/) | Landing page browse card photos |
+| [`vendor_photo/`](vendor_photo/) | Venue card background photos (filenames must be lowercase) |
+| [`rendezvous_pitch_script.md`](rendezvous_pitch_script.md) | Demo Day pitch script with speaker notes and Q&A prep |
+| [`rendezvous_final.pptx`](rendezvous_final.pptx) | Final pitch deck |
 | [`CLAUDE.md`](CLAUDE.md) | Claude Code workspace instructions |
 
 ### `docs/`
@@ -65,29 +69,31 @@ Persona files for the five simulated user archetypes used in product discovery w
 
 The prototype (`index.html`) is a complete SPA demonstrating:
 
-- **Landing page** — full-bleed photo hero with cursor parallax, frosted glass CTA
+- **Landing page** — full-bleed photo hero with cursor parallax, frosted glass CTA, real photos on browse cards
 - **How It Works** — three-step explainer
 - **4-step intake wizard** — collects 17 fields across client info, location, budget, and style
-- **Generating view** — animated progress bar while the AI scene is produced
+- **Generating view** — animated progress bar (spread across real 15–20s API duration)
 - **Dashboard** with:
-  - AI vision board (photorealistic scene from `gpt-image-1`)
+  - AI vision board (photorealistic scene from `gpt-image-1`, venue-specific, culturally aware)
   - Per-category budget sliders with live total tracking
   - Regenerate scene button (re-scores vendors, updates budget tier, calls API again)
-  - Vendor cards for all 38 Vancouver vendors (venues, caterers, photographers, florists, music, MCs, planners)
-  - Vendor filtering by category
-  - Shortlist (save/unsave vendors)
+  - Vendor cards for all 38 Vancouver vendors with real photo backgrounds, contextual pricing, and setting badges
+  - Vendor filtering by category (Caterers auto-hidden in All view when all top venues have in-house catering)
+  - Shortlist (save/unsave vendors) with heart pop animation
+  - Request Quote flow — save vendors → modal with pre-filled message → send all at once
   - Edit answers flow (returns to intake pre-filled, with back-to-dashboard button)
 
 ### Vendor Data
 
 All 38 vendor records include:
-- Name, location, price range, capacity, tags, emoji
-- `setting` — Indoor / Outdoor / Mixed
-- `desc` — one-sentence venue description
-- `catering` — Included / External / Inquire
+- Name, location, price range, capacity, 5–7 style tags, emoji
+- `setting` — Indoor / Outdoor / Indoor & Outdoor
+- `desc` — one-sentence description
+- `catering` — "In-house catering only" / "Bring your own caterer" / "Ask about catering"
 - `lgbtq` — LGBTQ+ affirming flag
 - `rating` — Google rating
-- AI match scoring across budget, capacity, style, cultural, and setting dimensions
+- Contextual pricing via `PRICING` map — estimates total cost for the couple's actual guest count
+- AI match scoring: budget fit (with penalty for over-budget), capacity, style, cultural, and setting
 
 ---
 

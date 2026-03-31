@@ -33,6 +33,10 @@ Rendezvous is an AI-powered wedding planning concierge. The core value propositi
 | `index-backup.html` | Previous working version of the prototype (safe restore point) |
 | `api/generate-image.js` | Vercel serverless function — calls OpenAI `gpt-image-1` to generate the vision board scene |
 | `wedding photo.jpg` | Hero background photo. Replace this file to change the landing hero image. |
+| `cover_photo/` | Landing page photos — `cover_photo.jpg` (hero), `browse_venues.jpg`, `browse_photographer.jpg`, `browse_catering.jpg` |
+| `vendor_photo/` | Vendor card background photos — filenames must be **lowercase** (Linux/Vercel is case-sensitive). Register in `VENDOR_PHOTOS` map by vendor id. |
+| `rendezvous_pitch_script.md` | Demo Day pitch script with speaker notes and Q&A prep |
+| `rendezvous_final.pptx` | Final pitch deck |
 | `Product Discovery/` | Workshop templates, examples, and AI persona prompt files |
 | `Interview/` | Interview snapshots for each of the five user personas |
 
@@ -126,9 +130,11 @@ const profile = { name1, name2, email, phone, date, flexibility, city, venueStat
 
 **Vision board + regen** — `regenScene()` re-scores the top venue from the live `currentAmounts`, sets `profile.liveBudget` from the sliders, calls `fetchSceneImage`, and shows a dark overlay (`vb-regen-overlay`, z-index 60) with its own progress bar (`vb-regen-bar`) covering the scene during generation. `vbRegenLeft` tracks remaining regenerations (starts at 3).
 
-**Vendor data** — The `vendors` array (38 records) covers 7 categories: venue, caterer, photographer, florist, music, mc, planner. Each vendor has: `id`, `cat`, `name`, `loc`, `price`, `pLabel`, `cap`, `tags`, `emoji`, `setting`, `desc`, `catering`, `lgbtq`, `rating`. The `scoreVendor(v)` function scores against the current `profile` across budget, capacity, style, cultural, and setting dimensions. `topN(list, n)` returns the top-n scored vendors from a list.
+**Vendor data** — The `vendors` array (38 records) covers 7 categories: venue, caterer, photographer, florist, music, mc, planner. Each vendor has: `id`, `cat`, `name`, `loc`, `price`, `pLabel`, `cap`, `tags`, `emoji`, `setting`, `desc`, `catering`, `lgbtq`, `rating`. Setting values: `'Indoor'`, `'Outdoor'`, `'Indoor & Outdoor'`. The `scoreVendor(v)` function scores against the current `profile` across budget, capacity, style, cultural, and setting dimensions. `topN(list, n)` returns the top-n scored vendors from a list.
 
-**Vendor cards** — `buildCard(v, delay)` renders the full card template including setting badge, description, catering/LGBTQ+ tags, and rating. CSS classes: `.vcard-desc`, `.vcard-rating`, `.vcard-setting`, `.tag-sage`.
+**Contextual pricing** — `PRICING` map (keyed by vendor id) with fields `pm`, `flatMin`, `flatMax`, `phMin`, `phMax`. `contextualPrice(v, guests)` computes estimated low/high for the couple's guest count using 5 pricing models: `mixed`, `per_head`, `flat`, `buyout`, `fixed`. Budget scoring uses this instead of `parsePrice(v.price)`. Over-budget venues receive a −16 penalty.
+
+**Vendor cards** — `buildCard(v, delay)` renders the full card template including photo background (from `VENDOR_PHOTOS[v.id]`), setting badge, description, catering label, LGBTQ+ tag, rating, and contextual price estimate. CSS classes: `.vcard-desc`, `.vcard-rating`, `.vcard-setting`, `.tag-sage`, `.vcard-img.has-photo`.
 
 **Fonts** — Fraunces + DM Sans loaded from Google Fonts in `<head>`.
 
