@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rendezvous — Investor Pitch Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,200;1,9..144,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --champagne: #F5EFE6;
+    --warm-white: #FAF7F3;
+    --rose: #C9A49A;
+    --rose-deep: #B8847A;
+    --sage: #8A9E8C;
+    --sage-light: #B4C4B6;
+    --charcoal: #2C2825;
+    --mid: #6B625A;
+    --light-rule: #E8DDD4;
+    --gold: #C4A96E;
+    --slide-bg: #FAF7F3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--charcoal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── Slide Container ── */
+  .deck {
+    position: relative;
+    width: 1200px;
+    height: 675px;
+    max-width: 100vw;
+    max-height: 56.25vw;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    background: var(--slide-bg);
+    display: none;
+    flex-direction: column;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .slide.active { display: flex; }
+
+  /* ── Top bar ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--light-rule);
+  }
+  .topbar-logo {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: 18px;
+    color: var(--rose);
+    letter-spacing: 0.04em;
+  }
+  .topbar-num {
+    font-family: 'Fraunces', serif;
+    font-weight: 300;
+    font-size: 22px;
+    color: var(--rose);
+  }
+
+  /* ── Slide body ── */
+  .slide-body {
+    flex: 1;
+    padding: 40px 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .slide-title {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: 52px;
+    color: var(--rose);
+    line-height: 1.05;
+    margin-bottom: 32px;
+  }
+
+  /* ── Bottom bar ── */
+  .bottombar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 48px;
+    border-top: 1px solid var(--light-rule);
+    font-size: 11px;
+    color: var(--mid);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── Typography utils ── */
+  .body-lg {
+    font-size: 22px;
+    color: var(--charcoal);
+    line-height: 1.5;
+    font-weight: 300;
+  }
+  .body-md {
+    font-size: 17px;
+    color: var(--mid);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  strong.accent { color: var(--charcoal); font-weight: 600; }
+  .serif-label {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rose);
+  }
+
+  /* ── SLIDE 1: Welcome ── */
+  .s1 { background: var(--charcoal); }
+  .s1 .topbar { border-color: rgba(255,255,255,0.08); }
+  .s1 .topbar-logo { color: var(--rose); }
+  .s1 .topbar-num { color: rgba(255,255,255,0.3); }
+  .s1 .bottombar { border-color: rgba(255,255,255,0.08); color: rgba(255,255,255,0.3); }
+  .s1 .slide-body { align-items: center; justify-content: center; text-align: center; gap: 0; }
+  .welcome-word {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: 96px;
+    color: #fff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+  .welcome-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: 28px;
+    color: var(--rose);
+    margin-top: 16px;
+    letter-spacing: 0.02em;
+  }
+  .tagline {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 28px;
+    letter-spacing: 0.04em;
+    font-weight: 300;
+  }
+  .divider-rose {
+    width: 48px;
+    height: 1px;
+    background: var(--rose);
+    margin: 28px auto;
+    opacity: 0.6;
+  }
+
+  /* ── SLIDE 2: Problem ── */
+  .problem-list { display: flex; flex-direction: column; gap: 24px; }
+  .problem-item { display: flex; gap: 24px; align-items: flex-start; }
+  .problem-icon {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 36px;
+    color: var(--rose);
+    line-height: 1;
+    min-width: 40px;
+  }
+  .problem-text { flex: 1; }
+  .problem-text strong { font-size: 20px; color: var(--charcoal); display: block; margin-bottom: 4px; font-weight: 600; }
+  .problem-text span { font-size: 15px; color: var(--mid); line-height: 1.5; font-weight: 300; }
+
+  /* ── SLIDE 3: Solution ── */
+  .solution-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
+  .sol-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .sol-card-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--charcoal);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sol-card-subtitle {
+    font-size: 13px;
+    color: var(--rose);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .sol-card-body { font-size: 14px; color: var(--mid); line-height: 1.6; }
+  .sol-card-accent { background: var(--rose); }
+  .sol-card-accent .sol-card-title, .sol-card-accent .sol-card-body { color: #fff; }
+  .sol-card-accent .sol-card-subtitle { color: rgba(255,255,255,0.7); }
+
+  /* ── SLIDE 4: Market Validation ── */
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 8px; }
+  .stat-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 28px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stat-number {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 56px;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .stat-label { font-size: 14px; color: var(--charcoal); font-weight: 500; line-height: 1.4; }
+  .stat-source { font-size: 11px; color: var(--mid); margin-top: 4px; }
+
+  /* ── SLIDE 5: Market Size ── */
+  .market-circles {
+    display: flex;
+    align-items: flex-end;
+    gap: 40px;
+    margin-top: 16px;
+    padding: 0 20px;
+  }
+  .mkt-circle-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .mkt-circle {
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+  }
+  .mkt-circle.large  { width: 260px; height: 260px; background: var(--rose); font-size: 36px; }
+  .mkt-circle.medium { width: 180px; height: 180px; background: var(--sage); font-size: 26px; }
+  .mkt-circle.small  { width: 120px; height: 120px; background: var(--gold); font-size: 20px; }
+  .mkt-circle-label {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    text-align: center;
+  }
+  .mkt-circle-sub { font-size: 11px; color: var(--mid); text-align: center; max-width: 140px; line-height: 1.4; }
+  .mkt-circle span { font-size: 13px; opacity: 0.85; font-weight: 300; display: block; margin-top: 2px; }
+
+  /* ── SLIDE 6: Product ── */
+  .product-flow { display: flex; align-items: center; gap: 0; margin-top: 16px; }
+  .product-step {
+    flex: 1;
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 28px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 260px;
+  }
+  .product-step.hero { background: var(--rose); }
+  .product-step.hero .step-num,
+  .product-step.hero .step-title,
+  .product-step.hero .step-body { color: #fff; }
+  .step-num {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 200;
+    font-size: 40px;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .step-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--charcoal);
+  }
+  .step-body { font-size: 13px; color: var(--mid); line-height: 1.6; }
+  .flow-arrow {
+    font-size: 20px;
+    color: var(--rose);
+    padding: 0 12px;
+    opacity: 0.6;
+  }
+
+  /* ── SLIDE 7: Business Model ── */
+  .biz-row { display: flex; gap: 24px; margin-top: 16px; align-items: stretch; }
+  .biz-card {
+    flex: 1;
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .biz-card.featured { background: var(--charcoal); }
+  .biz-card.featured .biz-amount, .biz-card.featured .biz-title { color: #fff; }
+  .biz-card.featured .biz-sub { color: rgba(255,255,255,0.55); }
+  .biz-amount {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 48px;
+    color: var(--rose);
+    line-height: 1;
+  }
+  .biz-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--charcoal); }
+  .biz-sub { font-size: 13px; color: var(--mid); line-height: 1.5; }
+  .arrow-right { color: var(--rose); font-size: 24px; display: flex; align-items: center; opacity: 0.5; }
+  .biz-model-headline {
+    font-size: 20px;
+    color: var(--charcoal);
+    font-weight: 300;
+    margin-bottom: 4px;
+  }
+  .biz-model-headline strong { font-weight: 600; }
+
+  /* ── SLIDE 8: Adoption Strategy ── */
+  .adoption-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
+  .adopt-col { display: flex; flex-direction: column; gap: 12px; }
+  .adopt-col-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--light-rule);
+  }
+  .adopt-sub { font-size: 12px; color: var(--rose); margin-bottom: 4px; }
+  .adopt-items { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .adopt-items li {
+    font-size: 14px;
+    color: var(--mid);
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .adopt-items li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--rose);
+    font-size: 18px;
+    line-height: 1.1;
+  }
+
+  /* ── SLIDE 9: Competition ── */
+  .comp-map {
+    position: relative;
+    flex: 1;
+    border: 1px solid var(--light-rule);
+    border-radius: 8px;
+    margin-top: 8px;
+    overflow: hidden;
+    background: var(--champagne);
+  }
+  .axis-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mid);
+    position: absolute;
+  }
+  .axis-h-left  { left: 24px; top: 50%; transform: translateY(-50%); }
+  .axis-h-right { right: 24px; top: 50%; transform: translateY(-50%); }
+  .axis-v-top   { top: 20px; left: 50%; transform: translateX(-50%); }
+  .axis-v-bot   { bottom: 20px; left: 50%; transform: translateX(-50%); }
+  .comp-axis-h { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--light-rule); }
+  .comp-axis-v { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--light-rule); }
+  .comp-dot {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .comp-dot-circle {
+    border-radius: 50%;
+    width: 14px; height: 14px;
+    background: var(--mid);
+    opacity: 0.5;
+  }
+  .comp-dot.rendezvous .comp-dot-circle {
+    background: var(--rose);
+    opacity: 1;
+    width: 20px; height: 20px;
+    box-shadow: 0 0 0 4px rgba(201,164,154,0.2);
+  }
+  .comp-dot-label {
+    font-size: 11px;
+    color: var(--charcoal);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .comp-dot.rendezvous .comp-dot-label {
+    color: var(--rose-deep);
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── SLIDE 10: Competitive Advantages ── */
+  .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 8px; }
+  .adv-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .adv-card.accent { background: var(--rose); }
+  .adv-card.accent .adv-title, .adv-card.accent .adv-body { color: #fff; }
+  .adv-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--charcoal);
+  }
+  .adv-body { font-size: 13px; color: var(--mid); line-height: 1.55; }
+
+  /* ── SLIDE 11: Team ── */
+  .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 8px; }
+  .team-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .team-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--rose);
+    opacity: 0.3;
+    margin-bottom: 4px;
+  }
+  .team-name { font-size: 17px; color: var(--charcoal); font-weight: 600; }
+  .team-role { font-size: 12px; color: var(--rose); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+  .team-bio { font-size: 13px; color: var(--mid); line-height: 1.5; }
+
+  /* ── SLIDE 12: Traction ── */
+  .quote-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 8px; }
+  .quote-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .quote-mark {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 48px;
+    color: var(--rose);
+    opacity: 0.4;
+    line-height: 0.8;
+  }
+  .quote-text {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 17px;
+    color: var(--charcoal);
+    line-height: 1.5;
+  }
+  .quote-attr { font-size: 12px; color: var(--mid); font-weight: 500; }
+
+  /* ── SLIDE 13: User Testimonials ── */
+  .testimonial-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 8px; }
+  .t-card {
+    background: var(--champagne);
+    border-radius: 8px;
+    padding: 24px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .t-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--charcoal);
+    line-height: 1.55;
+  }
+  .t-attr { font-size: 12px; color: var(--rose); font-weight: 600; }
+  .t-card.featured-t { background: var(--rose); }
+  .t-card.featured-t .t-quote { color: #fff; }
+  .t-card.featured-t .t-attr { color: rgba(255,255,255,0.75); }
+
+  /* ── SLIDE 14: Financial ── */
+  .fin-headline { font-size: 19px; color: var(--charcoal); font-weight: 300; margin-bottom: 24px; line-height: 1.5; }
+  .fin-row { display: flex; align-items: center; gap: 20px; margin-top: 8px; }
+  .fin-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .fin-circle {
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'Fraunces', serif;
+  }
+  .fin-circle.green  { width: 180px; height: 180px; background: var(--sage); font-size: 30px; font-weight: 600; }
+  .fin-circle.rose   { width: 140px; height: 140px; background: var(--rose); font-size: 22px; font-weight: 600; }
+  .fin-circle.gold   { width: 110px; height: 110px; background: var(--gold); font-size: 18px; font-weight: 600; }
+  .fin-circle span   { font-size: 13px; opacity: 0.8; font-weight: 300; margin-top: 2px; display: block; }
+  .fin-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--charcoal); text-align: center; }
+  .fin-sub { font-size: 12px; color: var(--mid); text-align: center; line-height: 1.4; max-width: 140px; }
+  .fin-divider { width: 1px; height: 80px; background: var(--light-rule); }
+  .fin-sep { font-size: 20px; color: var(--rose); opacity: 0.4; }
+
+  /* ── Navigation ── */
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .nav-btn {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.6);
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+    background: rgba(201,164,154,0.1);
+  }
+  .nav-count {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 15px;
+    color: rgba(255,255,255,0.35);
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.1em;
+  }
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-dot.active {
+    background: var(--rose);
+    width: 18px;
+    border-radius: 3px;
+  }
+
+  /* ── Keyboard hint ── */
+  .key-hint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.2);
+    margin-top: 8px;
+    letter-spacing: 0.08em;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ══ SLIDE 1: Welcome ══ -->
+  <div class="slide s1 active">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">1</span>
+    </div>
+    <div class="slide-body">
+      <div class="welcome-word">Rendezvous</div>
+      <div class="welcome-sub">AI Wedding Concierge</div>
+      <div class="divider-rose"></div>
+      <div class="tagline">From "We're engaged — now what?" to a clear vision, in minutes.</div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Vancouver, BC · 2026</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 2: Problem ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">2</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Problem</div>
+      <div class="problem-list">
+        <div class="problem-item">
+          <div class="problem-icon">i.</div>
+          <div class="problem-text">
+            <strong>The "0→1" paralysis</strong>
+            <span>Couples don't know what they need, in what order, or at what cost. Even those who hire planners feel completely lost in the first weeks.</span>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">ii.</div>
+          <div class="problem-text">
+            <strong>Pricing is opaque and trust is broken</strong>
+            <span>88% of venues hide pricing. Couples spend $3,000 on venue tours before getting a real quote. 52% end up over budget. Platform reviews are moderated by vendor advertisers.</span>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon">iii.</div>
+          <div class="problem-text">
+            <strong>Everything is fragmented</strong>
+            <span>Planning happens across spreadsheets, Instagram, vendor websites, and email — none of which connect. Existing platforms are vendor marketplaces with planning tools bolted on.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Source: WeddingPro 2025, WedStay 2025</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 3: Solution ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">3</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Solution</div>
+      <div class="solution-cols">
+        <div class="sol-card">
+          <div class="sol-card-subtitle">Visualize</div>
+          <div class="sol-card-title">See Your<br>Wedding First</div>
+          <div class="sol-card-body">An AI-generated ceremony scene built from your questionnaire — with annotated budget callouts on every element, so you see your wedding before you plan it.</div>
+        </div>
+        <div class="sol-card sol-card-accent">
+          <div class="sol-card-subtitle">Understand</div>
+          <div class="sol-card-title">Specific<br>Budget Breakdown</div>
+          <div class="sol-card-body">Not $20k–$50k ranges. Real allocations: "Venue $15k · Florals $4k · Photography $3k" — calibrated to your guest count, city, and priorities.</div>
+        </div>
+        <div class="sol-card">
+          <div class="sol-card-subtitle">Discover</div>
+          <div class="sol-card-title">Curated<br>Vendor Shortlist</div>
+          <div class="sol-card-body">5 matched vendors per category — filtered by budget allocation, capacity, cultural fit, and a transparent match score. No browsing 100 options.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Core loop: Understand → Visualize → Plan → Discover</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 4: Market Validation ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">4</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Market Validation</div>
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-number">78%</div>
+          <div class="stat-label">of couples say pricing is the #1 factor when deciding which vendors to contact</div>
+          <div class="stat-source">WeddingPro 2025 Real Weddings Vendor Report</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">88%</div>
+          <div class="stat-label">of venues hide their real pricing. Couples spend an average of $3,000 on venue tours before getting accurate quotes</div>
+          <div class="stat-source">WedStay, 2025</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">52%</div>
+          <div class="stat-label">of couples reported their initial budget was lower than actual spend. The average overage is $7,000+</div>
+          <div class="stat-source">WeddingPro 2025 Budget Trends Report</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">46%</div>
+          <div class="stat-label">of couples don't use AI in wedding planning — not because they don't want help, but because existing AI tools are too generic to trust</div>
+          <div class="stat-source">The Knot / WeddingPro AI Survey, 2025</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Demand is validated. Trust gap is the opportunity.</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 5: Market Size ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">5</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Market Size</div>
+      <div class="market-circles">
+        <div class="mkt-circle-wrap">
+          <div class="mkt-circle large">$300B+<span>global market</span></div>
+          <div class="mkt-circle-label">Total Available Market</div>
+          <div class="mkt-circle-sub">Global wedding spend · 2M+ couples/year in North America</div>
+        </div>
+        <div class="mkt-circle-wrap">
+          <div class="mkt-circle medium">$8B<span>N. America</span></div>
+          <div class="mkt-circle-label">Serviceable Market</div>
+          <div class="mkt-circle-sub">Online wedding planning &amp; vendor discovery</div>
+        </div>
+        <div class="mkt-circle-wrap">
+          <div class="mkt-circle small">$40M</div>
+          <div class="mkt-circle-label">Year 3 Target</div>
+          <div class="mkt-circle-sub">5 Canadian cities · 50K+ couples · 0.5% of SAM</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Source: Travel &amp; Tourism Org., WeddingPro 2025</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 6: Product ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">6</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Product</div>
+      <div class="product-flow">
+        <div class="product-step">
+          <div class="step-num">01</div>
+          <div class="step-title">Answer the Questionnaire</div>
+          <div class="step-body">A 3-step intake — date, city, guests, budget, style, and cultural needs. Feels like a warm conversation, not a form.</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="product-step hero">
+          <div class="step-num" style="color:rgba(255,255,255,0.5)">02</div>
+          <div class="step-title">See Your Vision Board ★</div>
+          <div class="step-body">An AI-generated ceremony image — your venue type, style, palette — with budget callout boxes on every element. Interactive, adjustable, emotional.</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="product-step">
+          <div class="step-num">03</div>
+          <div class="step-title">Discover &amp; Compare Vendors</div>
+          <div class="step-body">5 curated vendors per category, matched against your Vision Board budget allocation. Compare side-by-side with transparent scoring.</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="product-step">
+          <div class="step-num">04</div>
+          <div class="step-title">Plan from One Hub</div>
+          <div class="step-body">Dashboard with shortlist, budget tracker, and checklist — all connected. Your Vision Board allocations feed directly into vendor filtering.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Hero moment: "Here's your wedding — and here's how to make it happen."</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 7: Business Model ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">7</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Business Model</div>
+      <div class="biz-model-headline">Couples pay for clarity. Vendors pay for qualified leads — not impressions.</div>
+      <div class="biz-row" style="margin-top: 28px;">
+        <div class="biz-card">
+          <div class="biz-title">Freemium</div>
+          <div class="biz-amount">$0</div>
+          <div class="biz-sub">Intake + Vision Board free. Core value delivered upfront to drive activation. No paywall at the "wow moment."</div>
+        </div>
+        <div class="arrow-right">→</div>
+        <div class="biz-card">
+          <div class="biz-title">Couple Premium</div>
+          <div class="biz-amount">$19<span style="font-size:18px;color:var(--mid)">/mo</span></div>
+          <div class="biz-sub">Full dashboard, checklist, unlimited shortlists, budget simulator, and priority matching. Avg. planning window: 12–18 months.</div>
+        </div>
+        <div class="arrow-right">→</div>
+        <div class="biz-card featured">
+          <div class="biz-title" style="color:rgba(255,255,255,0.55)">Vendor Referral</div>
+          <div class="biz-amount">$150<span style="font-size:18px;color:rgba(255,255,255,0.35)">/booking</span></div>
+          <div class="biz-sub" style="color:rgba(255,255,255,0.5)">Per confirmed vendor introduction. No monthly subscription for vendors — pay only for qualified, budget-matched leads. Conflict-free model.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Revenue projection: $2.4M ARR by Year 2 on 10K couples + 200 vendor partners</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 8: Adoption Strategy ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">8</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Adoption Strategy</div>
+      <div class="adoption-cols">
+        <div class="adopt-col">
+          <div class="adopt-col-title">Engagement Season</div>
+          <div class="adopt-sub">Peak acquisition windows</div>
+          <ul class="adopt-items">
+            <li>Christmas &amp; Valentine's engagements (3M+ proposals/year in North America)</li>
+            <li>Targeted Meta/Instagram ads in 24-hour post-engagement window</li>
+            <li>Pinterest SEO — highest wedding planning intent platform</li>
+            <li>TikTok content: "We tried AI wedding planning" format</li>
+          </ul>
+        </div>
+        <div class="adopt-col">
+          <div class="adopt-col-title">Vendor Partnerships</div>
+          <div class="adopt-sub">Supply-side seeding</div>
+          <ul class="adopt-items">
+            <li>Seed 50+ Vancouver venues, caterers, photographers, planners before launch</li>
+            <li>Vendor referral incentive: first 3 leads free</li>
+            <li>Wedding planner co-marketing — position Rendezvous as their pre-meeting prep tool</li>
+            <li>Multicultural venue &amp; vendor partnerships (South Asian, Chinese-Canadian community)</li>
+          </ul>
+        </div>
+        <div class="adopt-col">
+          <div class="adopt-col-title">Trust Building</div>
+          <div class="adopt-sub">Conflict-free credibility</div>
+          <ul class="adopt-items">
+            <li>No vendor-paid ranking — couples see this immediately in onboarding</li>
+            <li>Transparent match scores with plain-English explanations</li>
+            <li>Reddit &amp; WeddingWire forum presence (couples already there)</li>
+            <li>Real couple case studies as social proof from week 1</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Launch market: Vancouver, BC · Year 1 goal: 2,000 couples onboarded</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 9: Competition ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">9</span>
+    </div>
+    <div class="slide-body" style="padding-bottom:24px;">
+      <div class="slide-title">Competition</div>
+      <div class="comp-map" style="flex:1; min-height: 0;">
+        <div class="comp-axis-h"></div>
+        <div class="comp-axis-v"></div>
+        <div class="axis-label axis-v-top">Couple-First / Curated</div>
+        <div class="axis-label axis-v-bot">Vendor-First / Directory</div>
+        <div class="axis-label axis-h-left">Opaque Pricing</div>
+        <div class="axis-label axis-h-right">Price Transparent</div>
+
+        <!-- Competitor dots -->
+        <div class="comp-dot" style="left:25%; top:65%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">The Knot</div>
+        </div>
+        <div class="comp-dot" style="left:20%; top:75%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">WeddingWire</div>
+        </div>
+        <div class="comp-dot" style="left:38%; top:45%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">Zola</div>
+        </div>
+        <div class="comp-dot" style="left:32%; top:40%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">Bridebook</div>
+        </div>
+        <div class="comp-dot" style="left:45%; top:38%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">Joy</div>
+        </div>
+        <div class="comp-dot" style="left:72%; top:55%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">Tulle Together</div>
+        </div>
+
+        <!-- Rendezvous -->
+        <div class="comp-dot rendezvous" style="left:78%; top:22%;">
+          <div class="comp-dot-circle"></div>
+          <div class="comp-dot-label">Rendezvous ★</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>No competitor occupies the top-right quadrant at scale.</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 10: Competitive Advantages ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">10</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Competitive Advantages</div>
+      <div class="adv-grid">
+        <div class="adv-card accent">
+          <div class="adv-title">Vision-First, Not Search-First</div>
+          <div class="adv-body" style="color:#fff">We give couples a picture of their wedding before they ask a single vendor question. No other platform does this. It's the only way to solve the 0→1 problem.</div>
+        </div>
+        <div class="adv-card">
+          <div class="adv-title">Intake-Driven Personalization</div>
+          <div class="adv-body">Recommendations are filtered against budget allocation by category — not total budget. $15k Venue ≠ $30k total. No competitor does constraint-first AI matching.</div>
+        </div>
+        <div class="adv-card">
+          <div class="adv-title">Price Transparency by Design</div>
+          <div class="adv-body">Vendors must provide pricing to be listed. Our model depends on it. The Knot and WeddingWire can't adopt this — it would kill their advertising revenue.</div>
+        </div>
+        <div class="adv-card">
+          <div class="adv-title">No Conflict of Interest</div>
+          <div class="adv-body">Vendors pay per qualified introduction, not for ranked placement. We can't be pressured to suppress reviews. Couples trust us precisely because our incentives are aligned.</div>
+        </div>
+        <div class="adv-card">
+          <div class="adv-title">Multicultural Vendor Matching</div>
+          <div class="adv-body">Cultural requirement tagging (South Asian, Chinese-Canadian, LGBTQ+-affirming) built into the data model from day one — a gap no incumbent has closed at scale.</div>
+        </div>
+        <div class="adv-card">
+          <div class="adv-title">Moat: The Vision Board</div>
+          <div class="adv-body">A couple's AI-generated ceremony image + budget breakdown is a personalized artifact they'll share, return to, and build from. Switching cost is their wedding plan itself.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Structural differentiators — not feature parity plays.</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 11: Team ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">11</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Team</div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar"></div>
+          <div class="team-name">Founder, CEO</div>
+          <div class="team-role">Product &amp; Strategy</div>
+          <div class="team-bio">Product leader with background in AI-assisted consumer applications and marketplace businesses. Led discovery for Rendezvous from zero — 8 user interviews, 5 AI persona simulations, full PRD and OST.</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--sage)"></div>
+          <div class="team-name">Co-Founder, CTO</div>
+          <div class="team-role">Engineering &amp; AI</div>
+          <div class="team-bio">Full-stack engineer specializing in Next.js, Supabase, and AI integration pipelines. Experience building image generation workflows and deterministic scoring engines at scale.</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar" style="background:var(--gold)"></div>
+          <div class="team-name">Co-Founder, COO</div>
+          <div class="team-role">Partnerships &amp; Growth</div>
+          <div class="team-bio">Deep relationships in the Vancouver wedding vendor community. Prior experience in marketplace growth — vendor supply-side strategy and organic acquisition for consumer platforms.</div>
+        </div>
+      </div>
+      <div style="margin-top:20px; font-size:13px; color:var(--mid);">
+        <span style="color:var(--rose); font-weight:600;">Advisory:</span> &nbsp;Vancouver wedding planners (2), multicultural events coordinator, AI product design advisor
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Actively building — reach out to learn more about the team.</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 12: Insight Validation ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">12</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">What We Heard</div>
+      <div class="quote-grid">
+        <div class="quote-card">
+          <div class="quote-mark">"</div>
+          <div class="quote-text">I don't really know how all the pieces fit together. I can list things, but I can't connect them.</div>
+          <div class="quote-attr">Chole — engaged, planning 60-guest wedding in Vancouver</div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-mark">"</div>
+          <div class="quote-text">At the beginning I had no direction. ChatGPT gave me too wide of a budget range — it wasn't actually helpful.</div>
+          <div class="quote-attr">Nina — recently engaged, budget-conscious planner</div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-mark">"</div>
+          <div class="quote-text">If I still have to go outside your platform to find vendors, then I don't need your platform.</div>
+          <div class="quote-attr">Jason — confidence-seeker, willing to pay for completeness</div>
+        </div>
+        <div class="quote-card">
+          <div class="quote-mark">"</div>
+          <div class="quote-text">Everything looks good on Instagram, so I want to include everything. But I can't tell what anything actually costs.</div>
+          <div class="quote-attr">Chole — decision-fatigued after 3 weeks of research</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>8 interviews · 5 AI personas · Core pain points validated across all segments</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 13: User Testimonials ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">13</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Early Signals</div>
+      <div class="testimonial-grid">
+        <div class="t-card featured-t">
+          <div class="t-quote">"Seeing my wedding visualized before I'd made a single booking decision would have saved me weeks of anxiety. I would have paid for that."</div>
+          <div class="t-attr">Karen T. — 120-guest wedding, $50k budget, high-touch planner</div>
+        </div>
+        <div class="t-card">
+          <div class="t-quote">"Price transparency is everything. I don't want to fall in love with a venue and then find out it's $20k over budget."</div>
+          <div class="t-attr">Jason M. — 50-guest, $12k, Vancouver — prioritizes honest information over aesthetic</div>
+        </div>
+        <div class="t-card">
+          <div class="t-quote">"Planning a Chinese-Canadian wedding with 200 guests — I need a platform that understands tea ceremony logistics and Mandarin-speaking vendors."</div>
+          <div class="t-attr">Li Na C. — 200-guest, $60k, time-constrained, cultural complexity</div>
+        </div>
+        <div class="t-card">
+          <div class="t-quote">"We're planning a wedding that honours both Mexican and Canadian traditions. We need a platform that doesn't assume a white Western wedding."</div>
+          <div class="t-attr">Mateo A. — same-sex, multicultural, budget-aware, logistics-focused</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Diverse segments, one shared frustration: the status quo is broken.</span>
+    </div>
+  </div>
+
+  <!-- ══ SLIDE 14: Financial ══ -->
+  <div class="slide">
+    <div class="topbar">
+      <span class="topbar-logo">Rendezvous</span>
+      <span class="topbar-num">14</span>
+    </div>
+    <div class="slide-body">
+      <div class="slide-title">Financial</div>
+      <div class="fin-headline">We are raising a <strong>$750K seed round</strong> to reach product-market fit validation in Vancouver — 2,000 couples onboarded and 100 vendor partners live.</div>
+      <div class="fin-row">
+        <div class="fin-card">
+          <div class="fin-circle green">$750K<span>seed ask</span></div>
+          <div class="fin-label">Seed Round</div>
+          <div class="fin-sub">18-month runway · MVP build + Vancouver launch + vendor seeding</div>
+        </div>
+        <div class="fin-sep">→</div>
+        <div class="fin-card">
+          <div class="fin-circle rose">2,000<span>couples</span></div>
+          <div class="fin-label">Year 1 Goal</div>
+          <div class="fin-sub">Vancouver launch · &gt;60% questionnaire completion · &gt;40% shortlist creation</div>
+        </div>
+        <div class="fin-sep">→</div>
+        <div class="fin-card">
+          <div class="fin-circle gold">$2.4M</div>
+          <div class="fin-label">Year 2 Revenue</div>
+          <div class="fin-sub">10K couples · 200 vendor partners · avg $25/mo premium + $150/introduction</div>
+        </div>
+      </div>
+    </div>
+    <div class="bottombar">
+      <span>hello@rendezvous.ca</span>
+      <span>Use of funds: 60% product &amp; engineering · 25% vendor acquisition · 15% marketing</span>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- Navigation -->
+<div class="nav">
+  <button class="nav-btn" id="prev" onclick="changeSlide(-1)">&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="next" onclick="changeSlide(1)">&#8594;</button>
+</div>
+<div class="nav-count" id="count">1 / 14</div>
+<div class="key-hint">← → arrow keys to navigate</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('dots');
+  let current = 0;
+  const total = slides.length;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsContainer.appendChild(d);
+  });
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    document.querySelectorAll('.nav-dot')[current].classList.remove('active');
+    current = (n + total) % total;
+    slides[current].classList.add('active');
+    document.querySelectorAll('.nav-dot')[current].classList.add('active');
+    document.getElementById('count').textContent = `${current + 1} / ${total}`;
+  }
+
+  function changeSlide(dir) { goTo(current + dir); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') changeSlide(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   changeSlide(-1);
+  });
+</script>
+</body>
+</html>
